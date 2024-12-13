@@ -9,6 +9,10 @@ const ArtistSchema = new Schema(
       type: String,
       required: [true, "Name is required"],
     },
+    bio: {
+      type: String,
+      trim: true,
+    },
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -34,6 +38,22 @@ const ArtistSchema = new Schema(
           "https://res.cloudinary.com/dydg4oqy5/image/upload/v1733662639/cihdkwnga1whsejrbmkb.png",
       },
     },
+    followersCount: {
+      type: Number,
+      default: 0,
+    },
+    socMedLinks: [
+      {
+        platform: {
+          type: String,
+          enum: ["Facebook", "Twitter", "Instagram"],
+        },
+        url: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
   },
   { collection: "artists", timestamps: true }
 );

@@ -2,6 +2,7 @@ import User from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Artist from "../models/artist.model";
 
 // Register
 export const signup = async (
@@ -120,5 +121,37 @@ export const logout = async (
   } catch (error) {
     console.log("Error logout", error);
     next(error);
+  }
+};
+
+export const registerArtist = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { name, email, phoneNumber, password } = req.body;
+
+    const newArtist = new Artist({
+      name,
+      email,
+      phoneNumber,
+      password,
+    });
+
+    await newArtist.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Artist successfully registered!",
+      data: newArtist,
+    });
+  } catch (error) {
+    console.error("Error creating artist", error);
+    next({
+      statusCode: 500,
+      message: "An error occurred while creating the artist.",
+      error: (error as Error).message,
+    });
   }
 };

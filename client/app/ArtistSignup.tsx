@@ -1,56 +1,42 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   TextInput,
-  Button,
   Text,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 import axiosInstance from "../utils/AxiosInstance";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../FirebaseConfig";
+
+// Define the type for your form values
+type FormValues = {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+};
 
 const ArtistSignup = ({ navigation }: any) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<FormValues>(); // Use the typed form values
+  const [loading, setLoading] = React.useState(false);
+  const [successMessage, setSuccessMessage] = React.useState("");
 
-  const validateForm = () => {
-    setError("");
-
-    if (!name || !email || !phoneNumber) {
-      setError("All fields are required.");
-      return false;
-    }
-
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailPattern.test(email)) {
-      setError("Please enter a valid email address.");
-      return false;
-    }
-
-    const phonePattern = /^[0-9]{10}$/;
-    if (!phonePattern.test(phoneNumber)) {
-      setError("Please enter a valid phone number (10 digits).");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSignup = async () => {
-    if (!validateForm()) return;
-
+  const onSubmit = async (data: FormValues) => {
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("phoneNumber", phoneNumber);
 
-      const response = await axiosInstance.post("/artists/signup", formData, {
+      const response = await axiosInstance.post("/auths/artistSignup", data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -58,13 +44,16 @@ const ArtistSignup = ({ navigation }: any) => {
 
       if (response.data.success) {
         setSuccessMessage("Registration Successful! Redirecting to Home...");
+        await createUserWithEmailAndPassword(auth, data.email, data.password);
 
-        setTimeout(() => {
-          navigation.navigate("Home");
-        }, 2000);
+        const firebaseSignIn = await signInWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
       }
     } catch (error) {
-      setError("An error occurred while signing up. Please try again.");
+      alert("An error occured");
     } finally {
       setLoading(false);
     }
@@ -74,35 +63,100 @@ const ArtistSignup = ({ navigation }: any) => {
     <View style={styles.container} className="bg-surface_a0">
       <Text style={styles.title}>Artist Signup</Text>
 
-      <TextInput
-        placeholder="Name"
-        placeholderTextColor="#B3B3B3"
-        className="bg-transparent border border-white rounded-lg mb-4 text-white "
-        value={name}
-        onChangeText={setName}
+      <Controller
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            placeholder="Name"
+            placeholderTextColor="#B3B3B3"
+            className="bg-transparent border border-white rounded-lg mb-4 text-white"
+            value={value}
+            onChangeText={onChange}
+          />
+        )}
+        name="name"
+        rules={{ required: "Name is required" }}
       />
-      <TextInput
-        className="bg-transparent border border-white rounded-lg mb-4 text-white "
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        placeholderTextColor="#B3B3B3"
+      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
+
+      <Controller
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            className="bg-transparent border border-white rounded-lg mb-4 text-white"
+            placeholder="Email"
+            value={value}
+            onChangeText={onChange}
+            placeholderTextColor="#B3B3B3"
+          />
+        )}
+        name="email"
+        rules={{
+          required: "Email is required",
+          pattern: {
+            value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+            message: "Please enter a valid email address",
+          },
+        }}
       />
-      <TextInput
-        className="bg-transparent border border-white rounded-lg mb-4 text-white "
-        placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="numeric"
-        placeholderTextColor="#B3B3B3"
+      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+
+      <Controller
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            className="bg-transparent border border-white rounded-lg mb-4 text-white"
+            placeholder="Phone Number"
+            value={value}
+            onChangeText={onChange}
+            keyboardType="numeric"
+            placeholderTextColor="#B3B3B3"
+          />
+        )}
+        name="phoneNumber"
+        rules={{
+          required: "Phone number is required",
+          pattern: {
+            value: /^[0-9]{10}$/,
+            message: "Please enter a valid phone number (10 digits)",
+          },
+        }}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      {successMessage ? (
-        <Text style={styles.success}>{successMessage}</Text>
-      ) : null}
+      {errors.phoneNumber && (
+        <Text style={styles.error}>{errors.phoneNumber.message}</Text>
+      )}
+
+      <Controller
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <TextInput
+            className="bg-transparent border border-white rounded-lg mb-4 text-white"
+            placeholder="Password"
+            value={value}
+            onChangeText={onChange}
+            secureTextEntry
+            placeholderTextColor="#B3B3B3"
+          />
+        )}
+        name="password"
+        rules={{
+          required: "Password is required",
+          minLength: {
+            value: 8,
+            message: "Password must be at least 8 characters long",
+          },
+        }}
+      />
+      {errors.password && (
+        <Text style={styles.error}>{errors.password.message}</Text>
+      )}
+
+      {successMessage && <Text style={styles.success}>{successMessage}</Text>}
+
       <TouchableOpacity
         style={[styles.button, loading ? styles.buttonDisabled : null]}
-        onPress={handleSignup}
+        className="bg-primary_a0"
+        onPress={handleSubmit(onSubmit)}
         disabled={loading}
       >
         <Text style={styles.buttonText}>
@@ -140,7 +194,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingVertical: 15,
     borderRadius: 8,
-    backgroundColor: "#007bff",
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,

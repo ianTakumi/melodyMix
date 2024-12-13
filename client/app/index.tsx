@@ -55,7 +55,8 @@ export default function App() {
             <Text className="text-white text-lg">Go to User Screen</Text>
           </TouchableOpacity>
         </Link>
-        <Link href="/artist" asChild>
+
+        <Link href="/artists" asChild>
           <TouchableOpacity>
             <Text className="text-white text-lg">Go to artists Screen</Text>
           </TouchableOpacity>
