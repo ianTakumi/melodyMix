@@ -71,7 +71,7 @@ const ArtistSignup = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container} className="bg-black">
+    <View style={styles.container} className="bg-surface_a0">
       <Text style={styles.title}>Artist Signup</Text>
 
       <TextInput

@@ -1,6 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 import { IUser } from "../types/user";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new Schema(
   {
@@ -14,6 +15,11 @@ const UserSchema = new Schema(
       required: [true, "Email is required"],
       unique: true,
       trim: true,
+    },
+    password: {
+      type: String,
+      trim: true,
+      minlength: [8, "Password must be at least 8 characters long"],
     },
     dob: {
       type: Date,
@@ -74,10 +80,39 @@ const UserSchema = new Schema(
   }
 );
 
+// Getting jwt token based on the env JWT secret
 UserSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET as string, {
     expiresIn: process.env.JWT_EXPIRES_TIME as string,
   });
+};
+
+// Encrypting password before saving to db
+UserSchema.pre("save", async function (next) {
+  const user = this;
+
+  if (!user.isModified("password")) {
+    return next();
+  }
+
+  if (typeof user.password !== "string") {
+    return next(new Error("Password is required and must be a string."));
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+    next();
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Comparing password for login and reset password
+UserSchema.methods.comparePassword = async function (
+  enteredPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 const User = model<IUser>("User", UserSchema);

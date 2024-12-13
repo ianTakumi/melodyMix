@@ -60,3 +60,22 @@ export const createArtist = async (
     });
   }
 };
+
+export const deleteArtist = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { artistId } = req.params;
+    const artist = await Artist.findById(artistId);
+    // await Artist.findByIdAndDelete(artistId);
+  } catch (error) {
+    console.error("Error deleting artist", error);
+    next({
+      statusCode: 500,
+      message: "An error occurred while deleting artist",
+      error: (error as Error).message,
+    });
+  }
+};

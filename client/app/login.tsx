@@ -7,14 +7,19 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
+import { auth } from "../FirebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useForm, Controller } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
-import auth from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
-
+import "../global.css";
+import { useDispatch } from "react-redux";
+import { setUser } from "./redux/slices/UserSlice"; // Adjust the import path based on your file structure
+import axiosInstance from "../utils/AxiosInstance";
 export default function Login() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const {
     control,
     handleSubmit,
@@ -36,11 +41,15 @@ export default function Login() {
     console.log(data);
     setLoading(true);
     try {
-      const user = await auth().signInWithEmailAndPassword(
+      const user = await signInWithEmailAndPassword(
+        auth,
         data.email,
         data.password
       );
-      router.push("/user");
+      if (user) {
+        // const response = await axiosInstance.post("/auths/login", data);
+        router.push("/users");
+      }
     } catch (e: any) {
       console.log(e);
       alert("Login unsuccessful");
@@ -116,6 +125,7 @@ export default function Login() {
 
         {/* Submit Button */}
         <TouchableOpacity
+          className="bg-primary_a0"
           onPress={handleSubmit(onSubmit)}
           style={styles.button}
         >
@@ -144,7 +154,6 @@ const styles = StyleSheet.create({
     height: 30,
   },
   button: {
-    backgroundColor: "#4CAF50",
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: "center",

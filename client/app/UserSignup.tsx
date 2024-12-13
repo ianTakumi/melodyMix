@@ -11,6 +11,14 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { GestureResponderEvent } from "react-native";
+import { auth } from "../FirebaseConfig";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { setUser } from "./redux/slices/UserSlice";
+import { useRouter } from "expo-router";
 
 const Signup = ({ navigation }: any) => {
   const [formData, setFormData] = useState({
@@ -22,7 +30,8 @@ const Signup = ({ navigation }: any) => {
     dob: "",
     role: "",
   });
-
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -48,28 +57,28 @@ const Signup = ({ navigation }: any) => {
     setErrorMessage("");
 
     try {
-      const response = await axiosInstance.post("/auths/signup", formData, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await axiosInstance
+        .post("/auths/signup", formData, {
+          headers: { "Content-Type": "application/json" },
+        })
+        .then();
 
       if (response.data.success) {
         setSuccessMessage("Registration successful!");
         console.log("Registration successful:", response.data);
+        await createUserWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
 
-        Alert.alert("Registration Successful", "Do you want to login?", [
-          {
-            text: "Yes",
-            onPress: () => {
-              setTimeout(() => {
-                navigation.navigate("Home");
-              }, 3000);
-            },
-          },
-          {
-            text: "No",
-            onPress: () => {},
-          },
-        ]);
+        const firebaseSignIn = await signInWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
+        dispatch(setUser(response.data.user));
+        router.push("/users");
       } else {
         setErrorMessage(response.data.message || "Registration failed");
         console.error("Registration failed:", response.data.message);
@@ -86,7 +95,7 @@ const Signup = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container} className="bg-black">
+    <View style={styles.container} className="bg-surface_a0">
       <Text style={styles.title} className="text-white">
         Sign Up
       </Text>
@@ -149,6 +158,7 @@ const Signup = ({ navigation }: any) => {
 
         <TouchableOpacity
           style={styles.submitButton}
+          className="bg-primary_a0"
           onPress={handleSubmit}
           disabled={loading}
         >
@@ -189,7 +199,6 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   submitButton: {
-    backgroundColor: "#4CAF50",
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",

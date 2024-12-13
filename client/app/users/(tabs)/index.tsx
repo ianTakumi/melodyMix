@@ -1,11 +1,18 @@
 import React from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, Text, View, ScrollView, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
+import { useSelector } from "react-redux";
+import ProfilePicture from "../../../components/ProfilePicture";
 
 export default function IndexPage() {
+  const user = useSelector((state: any) => state.user.user);
+  const isAuthenticated = useSelector(
+    (state: any) => state.user.isAuthenticated
+  );
+
   return (
     <LinearGradient
       className="flex-1"
@@ -16,6 +23,8 @@ export default function IndexPage() {
       <SafeAreaView className="flex-1 px-4">
         {/* Header Section */}
         <View className="pl-2 pt-10 flex flex-row justify-between items-center">
+          <ProfilePicture name={user.name} imageUrl={""} />
+
           <Text className="text-white font-bold font-mono text-3xl">
             Made for You
           </Text>
@@ -25,7 +34,18 @@ export default function IndexPage() {
             <Feather name="settings" size={32} color="white" />
           </View>
         </View>
-
+        <ScrollView className="mt-8">
+          <Text className="text-white font-mono text-2xl font-bold">
+            To get you started
+          </Text>
+          <ScrollView horizontal>
+            <Image
+              height={10}
+              width={10}
+              source={require("../../../assets/images/eheads.jpg")}
+            />
+          </ScrollView>
+        </ScrollView>
         {/* Content Section */}
       </SafeAreaView>
     </LinearGradient>

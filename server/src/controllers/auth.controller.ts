@@ -51,6 +51,7 @@ export const signup = async (
       success: true,
       message: "User registered successfully",
       token,
+      user,
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -70,6 +71,13 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next({ statusCode: 400, message: "All fields are required" });
+    }
+
+    const user = User.findOne({ email: email });
   } catch (error) {
     console.log("Error log in ", error);
     next(error);
