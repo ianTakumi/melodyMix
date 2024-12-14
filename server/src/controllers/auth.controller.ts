@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Artist from "../models/artist.model";
+import { IUser } from "../types/user";
+import { IArtist } from "../types/artist";
 
 // Register
 export const signup = async (
@@ -70,7 +72,7 @@ export const login = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -78,7 +80,43 @@ export const login = async (
       return next({ statusCode: 400, message: "All fields are required" });
     }
 
-    const user = User.findOne({ email: email });
+    const user = (await User.findOne({ email }).select(
+      "+password"
+    )) as IUser | null;
+
+    if (user && (await user.comparePassword(password))) {
+      const token = user.getJwtToken();
+      const userWithoutPassword = user.toObject();
+      delete userWithoutPassword.password;
+      res.status(200).json({
+        token,
+        user: userWithoutPassword,
+        message: "Successful login",
+        success: true,
+      });
+      return;
+    }
+
+    const artist = (await Artist.findOne({ email }).select(
+      "+password"
+    )) as IArtist | null;
+
+    if (artist && (await artist.comparePassword(password))) {
+      const token = artist.getJwtToken();
+      const artistWithoutPassword = artist.toObject();
+      delete artistWithoutPassword.password;
+      res.status(200).json({
+        token,
+        artist: artistWithoutPassword,
+        message: "Successful Login",
+        success: true,
+      });
+      return;
+    }
+    res.status(200).json({
+      success: false,
+      message: "Invalid email or password",
+    });
   } catch (error) {
     console.log("Error log in ", error);
     next(error);

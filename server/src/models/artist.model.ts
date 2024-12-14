@@ -54,6 +54,11 @@ const ArtistSchema = new Schema(
         },
       },
     ],
+    fcm_token: {
+      type: String,
+      default: null,
+      trim: true,
+    },
   },
   { collection: "artists", timestamps: true }
 );

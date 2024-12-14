@@ -17,4 +17,5 @@ export interface IUser extends Document {
   }[];
   fcm_token: string;
   getJwtToken(): string;
+  comparePassword(enteredPassword: string): Promise<boolean>;
 }

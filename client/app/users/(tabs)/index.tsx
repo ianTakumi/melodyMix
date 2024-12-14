@@ -28,6 +28,7 @@ export default function IndexPage() {
           <Text className="text-white font-bold font-mono text-3xl">
             Made for You
           </Text>
+
           <View className="flex-row justify-center items-center gap-5 space-x-4">
             <MaterialIcons name="notifications-none" size={32} color="white" />
             <Entypo name="back-in-time" size={32} color="white" />
@@ -38,6 +39,7 @@ export default function IndexPage() {
           <Text className="text-white font-mono text-2xl font-bold">
             To get you started
           </Text>
+          <Text className="text-white">User page</Text>
           <ScrollView horizontal>
             <Image
               height={10}

@@ -9,4 +9,5 @@ export interface IArtist extends Document {
     url: string;
   };
   getJwtToken: () => string;
+  comparePassword(enteredPassword: string): Promise<boolean>;
 }
