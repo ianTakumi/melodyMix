@@ -25,7 +25,7 @@ export default function StorePage() {
           {/* <ProfilePicture name={user.name} imageUrl={""} /> */}
 
           <Text className="text-white font-bold font-mono text-3xl">
-            Made for You
+            My Store
           </Text>
           <View className="flex-row justify-center items-center gap-5 space-x-4">
             <MaterialIcons name="notifications-none" size={32} color="white" />

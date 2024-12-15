@@ -24,7 +24,12 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
     <View
       style={[
         styles.container,
-        { width: size, height: size, borderRadius: size / 2 },
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: imageUrl ? "transparent" : "#8D67AB", // Conditionally set background color
+        },
       ]}
     >
       {imageUrl ? (
@@ -32,7 +37,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
           source={{ uri: imageUrl }} // Display the user's uploaded image
           style={[
             styles.image,
-            { width: size, height: size, borderRadius: size / 2 },
+            { width: 50, height: 50, borderRadius: size / 2 },
           ]}
         />
       ) : (
@@ -46,7 +51,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#8D67AB", // Light gray background for empty state
   },
   text: {
     color: "#fff",

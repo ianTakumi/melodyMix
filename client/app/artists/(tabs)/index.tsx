@@ -7,7 +7,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useSelector } from "react-redux";
 import ProfilePicture from "../../../components/ProfilePicture";
 export default function IndexPage() {
-  // const user = useSelector((state: any) => state.user.user);
+  const user = useSelector((state: any) => state.user.user);
   // const isAuthenticated = useSelector(
   //   (state: any) => state.user.isAuthenticated
   // );

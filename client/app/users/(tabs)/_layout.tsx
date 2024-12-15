@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 export default function TabLayout() {
   return (
     <Tabs>
@@ -65,7 +65,7 @@ export default function TabLayout() {
           title: "Premium",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <AntDesign name="search1" size={24} color={color} />
+            <MaterialIcons name="workspace-premium" size={24} color={color} />
           ),
           tabBarStyle: {
             backgroundColor: "transparent",

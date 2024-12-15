@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { ISong } from "../types/song";
+import cloudinary from "../config/cloudinary.config";
 
 const SongSchema = new Schema({
   artistId: {
@@ -70,6 +71,38 @@ const SongSchema = new Schema({
     default: Date.now,
   },
 });
+
+SongSchema.methods.deleteSongFile = async function () {
+  if (!this.audio || !this.audio.public_id) {
+    console.log("No audio file to delete");
+    return;
+  }
+
+  try {
+    const songPublicId = this.audio.public_id;
+    await cloudinary.uploader.destroy(songPublicId);
+    console.log(
+      `Successfully deleted song file with public_id: ${songPublicId}`
+    );
+  } catch (error) {
+    console.log("Error deleting song file", error);
+  }
+};
+
+SongSchema.methods.deletePicFile = async function () {
+  if (!this.audio || !this.audio.public_id) {
+    console.log("No pic file to delete");
+    return;
+  }
+
+  try {
+    const picPublicId = this.coverPic.public_id;
+    await cloudinary.uploader.destroy(picPublicId);
+    console.log(`Successfully deleted pic file with public_id: ${picPublicId}`);
+  } catch (error) {
+    console.log("Error deleting pic file", error);
+  }
+};
 
 const Song = model<ISong>("Song", SongSchema);
 export default Song;
