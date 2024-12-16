@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 interface ProfilePictureProps {
-  name: string; // User's name
+  name?: string; // User's name
   imageUrl?: string; // Optional image URL (if user has uploaded an image)
   size?: number; // Avatar size, default is 80
 }
@@ -18,7 +18,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   imageUrl,
   size = 30,
 }) => {
-  const firstLetter = name.charAt(0).toUpperCase(); // Get the first letter of the name
+  const firstLetter = name?.charAt(0).toUpperCase(); // Get the first letter of the name
 
   return (
     <View

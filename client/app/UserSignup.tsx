@@ -16,7 +16,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "./redux/hooks";
 import { setUser } from "./redux/slices/UserSlice";
 import { useRouter } from "expo-router";
 
@@ -30,7 +30,7 @@ const Signup = ({ navigation }: any) => {
     dob: "",
     role: "",
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");

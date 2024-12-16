@@ -13,15 +13,15 @@ import { useForm, Controller } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import { useDispatch } from "react-redux";
-import { setUser } from "./redux/slices/UserSlice"; // Adjust the import path based on your file structure
-
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import axiosInstance from "../utils/AxiosInstance";
-import { setArtist } from "./redux/slices/ArtistSlice";
+import { notifyToast } from "../utils/helpers";
+import { loadUser, saveUser } from "./redux/slices/AuthSlice";
+import { useEffect } from "react";
 
 export default function Login() {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const {
     control,
     handleSubmit,
@@ -33,6 +33,27 @@ export default function Login() {
     },
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Dispatch the loadUser action to check if a user is logged in
+    dispatch(loadUser());
+  }, [dispatch]);
+
+  const isAuthenticated = useAppSelector(
+    (state) => state.auth.user.isAuthenticated
+  );
+
+  useEffect(() => {
+    // Wait for the state to load before performing the navigation
+    if (isAuthenticated === null) return; // Skip if state is not yet loaded
+
+    // If the user is authenticated, push them to the appropriate screen
+    if (isAuthenticated) {
+      router.push("/users"); // Redirect to the home screen or any other screen
+    } else {
+      router.push("/login"); // Redirect to the login screen if not authenticated
+    }
+  }, [isAuthenticated, router]);
 
   interface LoginFormData {
     email: string;
@@ -55,17 +76,25 @@ export default function Login() {
           .post("/auths/login", data)
           .then((response) => {
             if (response.status === 200) {
+              notifyToast("Success", "Login successful!", "success");
               if (response.data.user) {
+                const userObj = response.data.user;
+                const userToken = response.data.token;
                 const user = response.data.user;
                 if (user.role === "customer") {
-                  dispatch(setUser(user));
+                  dispatch(
+                    saveUser({
+                      user: response.data.user,
+                      token: response.data.token,
+                    })
+                  );
                   router.push("/users");
                 } else if (user.role === "admin") {
                   router.push("/admin");
                 }
               } else if (response.data.artist) {
                 const artist = response.data.artist;
-                dispatch(setArtist(artist));
+
                 router.push("artists/");
               }
             }
@@ -73,7 +102,7 @@ export default function Login() {
       }
     } catch (e: any) {
       console.log(e);
-      alert("Login unsuccessful");
+      notifyToast("Warning", "Invalid credentials", "warning");
     } finally {
       setLoading(false);
     }

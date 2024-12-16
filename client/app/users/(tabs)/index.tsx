@@ -6,20 +6,35 @@ import {
   ScrollView,
   Image,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../redux/hooks";
 import ProfilePicture from "../../../components/ProfilePicture";
+import { createNotifications } from "react-native-notificated";
+import { RootState } from "../../redux/store";
 
 export default function IndexPage() {
-  const user = useSelector((state: any) => state.user.user);
-  const isAuthenticated = useSelector(
-    (state: any) => state.user.isAuthenticated
-  );
+  const user = useAppSelector((state: RootState) => state.auth.user);
+  const { useNotifications } = createNotifications({
+    defaultStylesSettings: {
+      darkMode: true,
+    },
+  });
 
+  const { notify } = useNotifications();
+
+  const handleNotify = () => {
+    notify("success", {
+      params: {
+        title: "Hello",
+        description: "Wow, that was easy!",
+      },
+    });
+  };
   return (
     <LinearGradient
       className="flex-1"
@@ -30,7 +45,7 @@ export default function IndexPage() {
       <SafeAreaView className="flex-1 px-4">
         {/* Header Section */}
         <View className="pl-2 pt-10 flex flex-row justify-between items-center">
-          <ProfilePicture name={user.name} imageUrl={""} />
+          <ProfilePicture name={user.data?.name} imageUrl={""} />
 
           <Text className="text-white font-bold font-mono text-3xl">
             Made for You

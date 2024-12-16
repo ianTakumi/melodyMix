@@ -11,13 +11,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import ProfilePicture from "../../../components/ProfilePicture";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
 
 export default function IndexPage() {
-  const user = useSelector((state: any) => state.user.user);
-  const isAuthenticated = useSelector(
-    (state: any) => state.user.isAuthenticated
-  );
+  const user = useAppSelector((state: RootState) => state.auth.user);
   const [isClicked, setIsClicked] = useState(false);
 
   const handleClick = () => {
@@ -49,7 +47,7 @@ export default function IndexPage() {
   }: {
     item: { id: string; url: any; name: string; role: string };
   }) => (
-    <View className="m-4 items-center">
+    <View className="m-6 items-center">
       {/* Image Section */}
       <View className="w-24 h-24 rounded-full overflow-hidden">
         <Image source={item.url} className="w-full h-full object-cover" />
@@ -57,9 +55,7 @@ export default function IndexPage() {
 
       {/* Text Section */}
       <Text className="text-white mt-2 text-base">{item.name}</Text>
-      <View className="w-full mt-1">
-        <Text className="text-gray-400 text-left text-base">{item.role}</Text>
-      </View>
+      <Text className="text-gray-400  text-base">{item.role}</Text>
     </View>
   );
 
@@ -74,7 +70,7 @@ export default function IndexPage() {
         {/* Header Section */}
         <View className="pl-2 pt-10 flex flex-row items-center justify-between">
           <View className="flex flex-row items-center gap-4">
-            <ProfilePicture name={user.name} imageUrl={""} />
+            <ProfilePicture name={user.data?.name} imageUrl={""} />
             <Text className="text-white font-bold font-mono text-3xl">
               Your Library
             </Text>
@@ -118,12 +114,25 @@ export default function IndexPage() {
           </TouchableOpacity>
         </View>
         {/* Main Content */}
+
         <View className="">
+          {/* list of currently artist and podcast saved to user's playlist */}
           <FlatList
             data={data}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             numColumns={3}
+            ListFooterComponent={
+              <View className="m-6 items-center">
+                {/* Image Section */}
+                <View className="w-24 h-24 rounded-full  bg-[#3E3E3E] flex justify-center items-center">
+                  <AntDesign name="plus" size={24} color="white" />
+                </View>
+
+                {/* Text Section */}
+                <Text className="text-white mt-2 text-base">Add Artists</Text>
+              </View>
+            }
           />
         </View>
       </SafeAreaView>

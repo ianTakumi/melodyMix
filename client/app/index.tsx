@@ -6,8 +6,55 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Link } from "expo-router";
+import { loadUser, saveUser } from "./redux/slices/AuthSlice";
+import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 
 export default function App() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  // State to track the loading status of the authentication check
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Dispatch the loadUser action to check if a user is logged in
+    dispatch(loadUser());
+  }, [dispatch]);
+
+  const isAuthenticated = useAppSelector(
+    (state) => state.auth.user.isAuthenticated
+  );
+
+  useEffect(() => {
+    // Wait for the state to load before performing the navigation
+    if (isAuthenticated === null) return; // Skip if state is not yet loaded
+
+    // Once the authentication status is determined, set loading to false
+    setLoading(false);
+
+    // If the user is authenticated, push them to the appropriate screen
+    if (isAuthenticated) {
+      router.push("/users"); // Redirect to the home screen or any other screen
+    } else {
+      router.push("/login"); // Redirect to the login screen if not authenticated
+    }
+  }, [isAuthenticated, router]);
+
+  if (loading) {
+    // Render a loading screen or splash screen while waiting for auth state
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-surface_a0">
+        <Image
+          source={require("../assets/images/adaptive-icon.png")}
+          style={{ width: 300, height: 300 }}
+        />
+        <Text className="text-white text-2xl">Loading...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-surface_a0">
       <View className="flex-1 items-center justify-center">
@@ -48,18 +95,6 @@ export default function App() {
 
         <Link href="/login">
           <Text className="text-white text-2xl">Log in</Text>
-        </Link>
-
-        <Link href="/users" asChild>
-          <TouchableOpacity>
-            <Text className="text-white text-lg">Go to User Screen</Text>
-          </TouchableOpacity>
-        </Link>
-
-        <Link href="/artists" asChild>
-          <TouchableOpacity>
-            <Text className="text-white text-lg">Go to artists Screen</Text>
-          </TouchableOpacity>
         </Link>
       </View>
     </SafeAreaView>
