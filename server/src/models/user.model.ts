@@ -2,6 +2,7 @@ import { Schema, model, Document } from "mongoose";
 import { IUser } from "../types/user";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import cloudinary from "../config/cloudinary.config";
 
 const UserSchema = new Schema(
   {
@@ -38,13 +39,10 @@ const UserSchema = new Schema(
     profile_picture: {
       public_id: {
         type: String,
-        default: "cihdkwnga1whsejrbmkb",
         trim: true,
       },
       url: {
         type: String,
-        default:
-          "https://res.cloudinary.com/dydg4oqy5/image/upload/v1733662639/cihdkwnga1whsejrbmkb.png",
         trim: true,
       },
     },
@@ -52,7 +50,7 @@ const UserSchema = new Schema(
       type: String,
       required: [true, "Role is required"],
       default: "customer",
-      enum: ["customer", "admin", "artist"],
+      enum: ["customer", "admin"],
       trim: true,
     },
     socialAccounts: [
@@ -113,6 +111,21 @@ UserSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+UserSchema.methods.deleteProfilePicture = async function (): Promise<void> {
+  try {
+    if (
+      this.profile_picture.public_id !== null &&
+      this.profile_picture.url !== null
+    ) {
+      const publicId = this.profile_picture.public_id;
+      await cloudinary.uploader.destroy(publicId);
+      console.log("Successfully deleted profile picture");
+    }
+  } catch (error) {
+    console.log("Error deleting profile picture");
+  }
 };
 
 const User = model<IUser>("User", UserSchema);

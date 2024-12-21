@@ -16,8 +16,7 @@ import { useRouter } from "expo-router";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import axiosInstance from "../utils/AxiosInstance";
 import { notifyToast } from "../utils/helpers";
-import { loadUser, saveUser } from "./redux/slices/AuthSlice";
-import { useEffect } from "react";
+import { saveUser } from "./redux/slices/AuthSlice";
 
 export default function Login() {
   const router = useRouter();
@@ -33,27 +32,6 @@ export default function Login() {
     },
   });
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Dispatch the loadUser action to check if a user is logged in
-    dispatch(loadUser());
-  }, [dispatch]);
-
-  const isAuthenticated = useAppSelector(
-    (state) => state.auth.user.isAuthenticated
-  );
-
-  useEffect(() => {
-    // Wait for the state to load before performing the navigation
-    if (isAuthenticated === null) return; // Skip if state is not yet loaded
-
-    // If the user is authenticated, push them to the appropriate screen
-    if (isAuthenticated) {
-      router.push("/users"); // Redirect to the home screen or any other screen
-    } else {
-      router.push("/login"); // Redirect to the login screen if not authenticated
-    }
-  }, [isAuthenticated, router]);
 
   interface LoginFormData {
     email: string;

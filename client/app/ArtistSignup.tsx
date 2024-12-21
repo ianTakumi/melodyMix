@@ -13,8 +13,12 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../FirebaseConfig";
+import { useAppDispatch } from "./redux/hooks";
+import { saveArtist } from "./redux/slices/AuthSlice";
+import { notifyToast } from "../utils/helpers";
+import { useRouter } from "expo-router";
 
-// Define the type for your form values
+// type for the form values
 type FormValues = {
   name: string;
   email: string;
@@ -28,30 +32,37 @@ const ArtistSignup = ({ navigation }: any) => {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<FormValues>(); // Use the typed form values
+  } = useForm<FormValues>();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = React.useState(false);
   const [successMessage, setSuccessMessage] = React.useState("");
+  const router = useRouter();
 
   const onSubmit = async (data: FormValues) => {
     try {
       setLoading(true);
 
-      const response = await axiosInstance.post("/auths/artistSignup", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await axiosInstance
+        .post("/auths/artistSignup", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(async (response) => {
+          const artist = response.data.artist;
+          const token = response.data.token;
 
-      if (response.data.success) {
-        setSuccessMessage("Registration Successful! Redirecting to Home...");
-        await createUserWithEmailAndPassword(auth, data.email, data.password);
+          notifyToast("Success", "Registration Successful", "success");
+          await createUserWithEmailAndPassword(auth, data.email, data.password);
 
-        const firebaseSignIn = await signInWithEmailAndPassword(
-          auth,
-          data.email,
-          data.password
-        );
-      }
+          const firebaseSignIn = await signInWithEmailAndPassword(
+            auth,
+            data.email,
+            data.password
+          );
+          dispatch(saveArtist({ artist, token }));
+          router.push("/artists");
+        });
     } catch (error) {
       alert("An error occured");
     } finally {

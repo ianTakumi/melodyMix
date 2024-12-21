@@ -1,8 +1,11 @@
 import { Router, Request, Response } from "express";
 const router = Router();
-const UserController = require("../controllers/user.controller");
+import { getAllUsers, updateUserProfile } from "../controllers/user.controller";
 
 // Get all users
-router.get("/", UserController.getAllUsers);
+router.get("/", getAllUsers);
+
+// Update profile details
+router.put("/:userId", updateUserProfile);
 
 export default router;

@@ -16,7 +16,11 @@ exports.getAllProducts = async (
     });
   } catch (error) {
     console.log("Error fetching products", error);
-    next(error);
+    next({
+      statusCode: 500,
+      message: "An error occured while deleting the product ",
+      error: (error as Error).message,
+    });
   }
 };
 
@@ -25,4 +29,14 @@ exports.deleteProduct = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {};
+): Promise<void> => {
+  try {
+  } catch (error) {
+    console.log(error);
+    next({
+      statusCode: 500,
+      message: "An error occured while deleting the product ",
+      error: (error as Error).message,
+    });
+  }
+};

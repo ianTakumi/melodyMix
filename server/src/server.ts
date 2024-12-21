@@ -9,23 +9,18 @@ import bodyParser from "body-parser";
 import contactRoutes from "./routes/contact.routes";
 import authRoutes from "./routes/auth.routes";
 import artistRoutes from "./routes/artist.routes";
-// import userRoutes from "./routes/user.routes";
+import userRoutes from "./routes/user.routes";
 import errorHandler from "./middleware/error.middleware";
+import playlistRoutes from "./routes/playlist.routes";
 
 // Load environment variables
 dotenv.config();
-
-// Cors configurations
-const corsOptions: CorsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
-};
 
 // Express app
 const app: Application = express();
 
 // Middleware
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
@@ -33,7 +28,8 @@ app.use(express.json());
 app.use("/api/v1/contacts", contactRoutes);
 app.use("/api/v1/artists", artistRoutes);
 app.use("/api/v1/auths", authRoutes);
-// app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/playlists", playlistRoutes);
+app.use("/api/v1/users", userRoutes);
 
 // Initialize global error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

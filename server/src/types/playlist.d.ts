@@ -1,8 +1,14 @@
 import { Document } from "mongoose";
 
 export interface IPlaylist extends Document {
-  userId: string;
+  userId: Types.ObjectId;
   title: string;
-  description: string;
-  songs: [{ type: Schema.Types.ObjectId; ref: "Song" }];
+  songs: Types.ObjectId[];
+  coverPic: {
+    public_id: string | null;
+    url: string | null;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+  deleteCoverPic(): Promise<void>;
 }

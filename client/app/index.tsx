@@ -37,8 +37,6 @@ export default function App() {
     // If the user is authenticated, push them to the appropriate screen
     if (isAuthenticated) {
       router.push("/users"); // Redirect to the home screen or any other screen
-    } else {
-      router.push("/login"); // Redirect to the login screen if not authenticated
     }
   }, [isAuthenticated, router]);
 

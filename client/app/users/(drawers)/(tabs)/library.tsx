@@ -10,9 +10,9 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
-import ProfilePicture from "../../../components/ProfilePicture";
-import { useAppSelector } from "../../redux/hooks";
-import { RootState } from "../../redux/store";
+import ProfilePicture from "../../../../components/ProfilePicture";
+import { useAppSelector } from "../../../redux/hooks";
+import { RootState } from "../../../redux/store";
 
 export default function IndexPage() {
   const user = useAppSelector((state: RootState) => state.auth.user);
@@ -27,19 +27,19 @@ export default function IndexPage() {
       id: "1",
       name: "Join the Club",
       role: "Artist",
-      url: require("../../../assets/images/eheads.jpg"),
+      url: require("../../../../assets/images/eheads.jpg"),
     },
     {
       id: "2",
       name: "Eraserheads",
       role: "Artist",
-      url: require("../../../assets/images/eheads.jpg"),
+      url: require("../../../../assets/images/eheads.jpg"),
     },
     {
       id: "3",
       name: "Silent Sanctuary",
       role: "Artist",
-      url: require("../../../assets/images/silentSanctuary.jpg"),
+      url: require("../../../../assets/images/silentSanctuary.jpg"),
     },
   ];
   const renderItem = ({

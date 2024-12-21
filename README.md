@@ -9,7 +9,6 @@
 ### 🎶 **Music Streaming**
 
 - Discover and stream millions of songs.
-- Curate and share playlists with friends.
 - Explore recommended tracks based on your listening history.
 
 ### 🛍️ **Merchandise Store**
@@ -56,6 +55,7 @@
    git clone https://github.com/your-username/melodymix.git
    cd melodymix
    ```
+
 # Frontend Setup
 
 1. Install dependencies for client:

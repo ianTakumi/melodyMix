@@ -96,9 +96,14 @@ export const saveUser = createAsyncThunk(
 
 export const saveArtist = createAsyncThunk(
   "auth/saveArtist",
-  async (artist: any) => {
-    await AsyncStorage.setItem("artistJwt", artist.token);
-    await AsyncStorage.setItem("artistData", JSON.stringify(artist.data));
+  async ({ artist, token }: { artist: any; token: string }) => {
+    await AsyncStorage.setItem("artistJwt", token);
+    await AsyncStorage.setItem("artistData", JSON.stringify(artist));
+    const savedToken = AsyncStorage.getItem("artistJwt");
+    const savedArtist = AsyncStorage.getItem("artistData");
+
+    console.log("Artist saved token: ", savedToken);
+    console.log("Artist data: ", savedArtist);
     return { isAuthenticated: true, data: artist.data, token: artist.token };
   }
 );
@@ -155,4 +160,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { logoutUser, logoutArtist } = authSlice.actions;
 export default authSlice.reducer;

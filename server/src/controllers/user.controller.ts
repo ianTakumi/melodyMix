@@ -2,7 +2,7 @@ import User from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
 
 // Get all users
-exports.getAllUsers = async (
+export const getAllUsers = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -17,5 +17,36 @@ exports.getAllUsers = async (
   } catch (error) {
     console.log("Error fetching users", error);
     next(error);
+  }
+};
+
+// Update profile
+export const updateUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    console.log(userId);
+    const { name, email, phoneNumber, dob, gender } = req.body;
+
+    const data = { name, email, phoneNumber, dob, gender };
+
+    const user = await User.findByIdAndUpdate(userId, data, { new: true });
+
+    if (!user) {
+      return next({ statusCode: 400, message: "User not found" });
+    }
+    // res.status(200).json({ message: "Received" });
+
+    res.status(200).json({ success: true, message: "Profile updated", user });
+  } catch (error) {
+    console.log("Error updating user profile", error);
+    next({
+      statusCode: 500,
+      message: "Update profile unsuccessful",
+      error: (error as Error).message,
+    });
   }
 };

@@ -1,8 +1,10 @@
 import { createNotifications } from "react-native-notificated";
 
 const { useNotifications } = createNotifications({
+  isNotch: true,
+
   defaultStylesSettings: {
-    darkMode: false,
+    darkMode: true,
     globalConfig: {
       borderRadius: 5000,
     },

@@ -28,7 +28,7 @@ export default function IndexPage() {
             <Image
               className="w-full h-full"
               resizeMode="cover"
-              source={require("../../../assets/images/abstract.webp")}
+              source={require("../../../../assets/images/abstract.webp")}
             />
             {/* Text Overlay */}
             <View className="absolute top-0 left-0 right-0 bottom-0 justify-center px-4">
@@ -107,7 +107,7 @@ export default function IndexPage() {
               <Image
                 className="h-6 w-6 mr-1"
                 resizeMode="contain"
-                source={require("../../../assets/images/whiteLogo.png")}
+                source={require("../../../../assets/images/whiteLogo.png")}
               />
               <View>
                 <Text className="text-white text-base font-semibold">
@@ -161,7 +161,7 @@ export default function IndexPage() {
               <Image
                 className="h-6 w-6 mr-1"
                 resizeMode="contain"
-                source={require("../../../assets/images/whiteLogo.png")}
+                source={require("../../../../assets/images/whiteLogo.png")}
               />
               <View>
                 <Text className="text-white text-base font-semibold">
@@ -215,7 +215,7 @@ export default function IndexPage() {
               <Image
                 className="h-6 w-6 mr-1"
                 resizeMode="contain"
-                source={require("../../../assets/images/whiteLogo.png")}
+                source={require("../../../../assets/images/whiteLogo.png")}
               />
               <View>
                 <Text className="text-white text-base font-semibold">
@@ -262,7 +262,7 @@ export default function IndexPage() {
               <Image
                 className="h-6 w-6 mr-1"
                 resizeMode="contain"
-                source={require("../../../assets/images/whiteLogo.png")}
+                source={require("../../../../assets/images/whiteLogo.png")}
               />
               <View>
                 <Text className="text-white text-base font-semibold">
@@ -309,7 +309,7 @@ export default function IndexPage() {
               <Image
                 className="h-6 w-6 mr-1"
                 resizeMode="contain"
-                source={require("../../../assets/images/whiteLogo.png")}
+                source={require("../../../../assets/images/whiteLogo.png")}
               />
               <View>
                 <Text className="text-white text-base font-semibold">

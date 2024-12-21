@@ -5,7 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
 import { useSelector } from "react-redux";
-import ProfilePicture from "../../../components/ProfilePicture";
+import ProfilePicture from "../../../../components/ProfilePicture";
 export default function StorePage() {
   // const user = useSelector((state: any) => state.user.user);
   // const isAuthenticated = useSelector(

@@ -9,54 +9,27 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Entypo from "@expo/vector-icons/Entypo";
-import Feather from "@expo/vector-icons/Feather";
-import { useAppSelector } from "../../redux/hooks";
-import ProfilePicture from "../../../components/ProfilePicture";
+import { useAppSelector } from "../../../redux/hooks";
 import { createNotifications } from "react-native-notificated";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../../redux/store";
+import { notifyToast } from "../../../../utils/helpers";
 
 export default function IndexPage() {
   const user = useAppSelector((state: RootState) => state.auth.user);
-  const { useNotifications } = createNotifications({
-    defaultStylesSettings: {
-      darkMode: true,
-    },
-  });
-
-  const { notify } = useNotifications();
 
   const handleNotify = () => {
-    notify("success", {
-      params: {
-        title: "Hello",
-        description: "Wow, that was easy!",
-      },
-    });
+    notifyToast("Welcome back!", `Nice to see you again `, "success");
   };
   return (
     <LinearGradient
       className="flex-1"
-      colors={["#121212", "#282828", "#121212"]} // Define the gradient colors
+      colors={["#121212", "#282828", "#121212"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
     >
       <SafeAreaView className="flex-1 px-4">
         {/* Header Section */}
-        <View className="pl-2 pt-10 flex flex-row justify-between items-center">
-          <ProfilePicture name={user.data?.name} imageUrl={""} />
 
-          <Text className="text-white font-bold font-mono text-3xl">
-            Made for You
-          </Text>
-
-          <View className="flex-row justify-center items-center gap-5 space-x-4">
-            <MaterialIcons name="notifications-none" size={32} color="white" />
-            <Entypo name="back-in-time" size={32} color="white" />
-            <Feather name="settings" size={32} color="white" />
-          </View>
-        </View>
         <ScrollView className="mt-8">
           <Text className="text-white font-mono text-2xl font-bold">
             To get you started
@@ -69,7 +42,7 @@ export default function IndexPage() {
             <View style={styles.card}>
               <Image
                 style={styles.image}
-                source={require("../../../assets/images/eheads.jpg")}
+                source={require("../../../../assets/images/eheads.jpg")}
               />
               <Text style={styles.textGray} className="font-serif">
                 Catch the latest playlist of Eraserheads's album
@@ -78,7 +51,7 @@ export default function IndexPage() {
             <View style={styles.card}>
               <Image
                 style={styles.image}
-                source={require("../../../assets/images/silentSanctuary.jpg")}
+                source={require("../../../../assets/images/silentSanctuary.jpg")}
               />
               <Text style={styles.textGray} className="font-serif">
                 Relax listening to Silent Sancuatry's Album
