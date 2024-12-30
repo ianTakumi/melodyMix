@@ -1,9 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ISubscription } from "../types/subscription";
 
 interface UserData {
   _id: string;
+  subscription: string | ISubscription;
+  stripeCustomerId: string;
   name: string;
   email: string;
   dob: Date;
@@ -94,6 +97,7 @@ export const saveUser = createAsyncThunk(
   }
 );
 
+// Save artist data to async storage
 export const saveArtist = createAsyncThunk(
   "auth/saveArtist",
   async ({ artist, token }: { artist: any; token: string }) => {
@@ -105,6 +109,15 @@ export const saveArtist = createAsyncThunk(
     console.log("Artist saved token: ", savedToken);
     console.log("Artist data: ", savedArtist);
     return { isAuthenticated: true, data: artist.data, token: artist.token };
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async ({ user }: { user: UserData }) => {
+    AsyncStorage.removeItem("userData");
+    await AsyncStorage.setItem("userData", JSON.stringify(user));
+    return user;
   }
 );
 
@@ -156,6 +169,9 @@ const authSlice = createSlice({
     });
     builder.addCase(saveArtist.fulfilled, (state, action) => {
       state.artist = action.payload;
+    });
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      state.user.data = action.payload;
     });
   },
 });

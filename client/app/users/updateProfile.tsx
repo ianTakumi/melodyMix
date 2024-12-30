@@ -8,15 +8,18 @@ import { RootState } from "../redux/store";
 import { useForm, Controller } from "react-hook-form";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useRouter } from "expo-router";
 import { notifyToast } from "../../utils/helpers";
+import { useAppDispatch } from "../redux/hooks";
+import { updateUser } from "../redux/slices/AuthSlice";
 
 const UpdateProfile = () => {
   const user = useAppSelector((state: RootState) => state.auth.user);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const data = [
     { key: "Man", value: "Man" },
     { key: "Woman", value: "Woman" },
@@ -27,23 +30,34 @@ const UpdateProfile = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: {
-      name: user.data?.name || "",
-      email: user.data?.email || "",
-      phoneNumber: user.data?.phoneNumber || "",
-      dob: user.data?.dob || null,
-      gender: user.data?.gender || "",
+      name: "",
+      email: "",
+      phoneNumber: "",
+      dob: null,
+      gender: "",
     },
   });
 
+  useEffect(() => {
+    if (user.data) {
+      setValue("name", user.data.name || "");
+      setValue("email", user.data.email || "");
+      setValue("phoneNumber", user.data.phoneNumber || "");
+      setValue("dob", user.data.dob || null);
+      setValue("gender", user.data.gender || "");
+    }
+  }, [user.data, setValue]);
+
   const onSubmit = (data: any) => {
     const userId = user.data?._id;
-    // console.log(userId);
-    // console.log(data);
     axiosInstance.put(`/users/${userId}`, data).then((response) => {
       if (response.status === 200) {
+        const user = response.data.user;
         notifyToast("Success", response.data.message, "success");
+        dispatch(updateUser({ user: user }));
       }
     });
   };
@@ -71,10 +85,10 @@ const UpdateProfile = () => {
         <Controller
           control={control}
           name="name"
-          rules={{ required: "Name is required" }}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               value={value}
+              onBlur={onBlur}
               className="text-white text-xl"
               onChangeText={onChange}
               placeholder="Name"
@@ -86,18 +100,19 @@ const UpdateProfile = () => {
       {errors.name && (
         <Text className="text-red-500 mx-4 mt-2">{errors.name.message}</Text>
       )}
-      <View className="flex flex-row mt-7 mx-3  py-2 border-b border-[#202020] items-center">
+      <View className="flex flex-row mt-7 mx-3  py-2 border-b border-[#202020] items-center w-full">
         <Text className="text-white text-xl font-bold mr-10">Email</Text>
 
         <Controller
           control={control}
           name="email"
           rules={{ required: "Email is required" }}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               value={value}
               className="text-white text-xl"
               onChangeText={onChange}
+              onBlur={onBlur}
               placeholder="Email"
               placeholderTextColor={"#353535"}
             />

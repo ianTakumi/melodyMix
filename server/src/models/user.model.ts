@@ -3,9 +3,19 @@ import { IUser } from "../types/user";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import cloudinary from "../config/cloudinary.config";
+import Subscription from "./subscription.model";
+import stripe from "../config/stripe.config";
 
 const UserSchema = new Schema(
   {
+    subscription: {
+      type: Schema.Types.ObjectId,
+      ref: "Subscription",
+    },
+    stripeCustomerId: {
+      type: String,
+      trim: true,
+    },
     name: {
       type: String,
       required: [true, "Name is required."],
@@ -125,6 +135,34 @@ UserSchema.methods.deleteProfilePicture = async function (): Promise<void> {
     }
   } catch (error) {
     console.log("Error deleting profile picture");
+  }
+};
+
+UserSchema.methods.createDefaultSubscription =
+  async function (): Promise<void> {
+    try {
+      const defaultSubscription = new Subscription({
+        userId: this,
+      });
+      const savedSubscription = await defaultSubscription.save();
+      this.subscription = savedSubscription._id;
+      await this.save();
+    } catch (error) {
+      console.log("Error creating default subscription");
+    }
+  };
+
+UserSchema.methods.createCustomerStripe = async function (): Promise<void> {
+  try {
+    const customer = await stripe.customers.create({
+      email: this.email,
+      name: this.name,
+    });
+    this.stripeCustomerId = customer.id;
+    await this.save();
+  } catch (error) {
+    console.log("Error creating stripe customer");
+    throw new Error("Stripe customer creation failed");
   }
 };
 

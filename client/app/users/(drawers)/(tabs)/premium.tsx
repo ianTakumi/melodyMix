@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   Text,
@@ -11,8 +11,88 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useStripe } from "@stripe/stripe-react-native";
+import axiosInstance from "../../../../utils/AxiosInstance";
+import { useAppSelector } from "../../../redux/hooks";
+import { RootState } from "../../../redux/store";
+import { notifyToast } from "../../../../utils/helpers";
 
-export default function IndexPage() {
+export default function PremiumPage() {
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const user = useAppSelector((state: RootState) => state.auth.user);
+  const [isPaymentSheetInitialized, setIsPaymentSheetInitialized] =
+    useState(false);
+
+  const fetchPaymentSheetParams = async (): Promise<{
+    paymentIntent: string;
+    ephemeralKey: string;
+    customer: string;
+  }> => {
+    const response = await axiosInstance.post(
+      `/subscriptions/${user.data?._id}`
+    );
+    const { paymentIntent, ephemeralKey, customer } = response.data;
+    console.log("PaymentSheet Params:", response.data);
+    return {
+      paymentIntent,
+      ephemeralKey,
+      customer,
+    };
+  };
+
+  const initializePaymentSheet = async () => {
+    try {
+      const { paymentIntent, ephemeralKey, customer } =
+        await fetchPaymentSheetParams();
+      const { error } = await initPaymentSheet({
+        merchantDisplayName: "Melody Mix",
+        customerId: customer,
+        customerEphemeralKeySecret: ephemeralKey,
+        paymentIntentClientSecret: paymentIntent,
+        defaultBillingDetails: {
+          name: user.data?.name,
+          email: user.data?.email,
+        },
+      });
+
+      if (error) {
+        console.warn("Error initializing PaymentSheet:", error);
+        notifyToast("Failed to initialize payment sheet", "error", "error");
+      } else {
+        setIsPaymentSheetInitialized(true);
+      }
+    } catch (error) {
+      console.warn("Error in fetching payment parameters:", error);
+      notifyToast("Error fetching payment details", "error", "error");
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    console.log("STRIPE_PUBLISHABLE_KEY:", process.env.STRIPE_PUBLISHABLE_KEY);
+
+    if (!isPaymentSheetInitialized) {
+      notifyToast("Payment sheet is not initialized", "error", "error");
+      return;
+    }
+
+    try {
+      const { error } = await presentPaymentSheet();
+      if (error) {
+        console.warn("Error in presentPaymentSheet:", error.message);
+        notifyToast("Error in presentPaymentSheet", error.message, "error");
+      } else {
+        notifyToast("Payment successful!", "success", "success");
+      }
+    } catch (error) {
+      console.warn("Unexpected error:", error);
+      notifyToast("Unexpected error during payment process", "error", "error");
+    }
+  };
+
+  useEffect(() => {
+    initializePaymentSheet();
+  }, []);
+
   return (
     <LinearGradient
       className="flex-1"
@@ -147,7 +227,10 @@ export default function IndexPage() {
                 1 mobile-only Premium account
               </Text>
             </View>
-            <TouchableOpacity className="bg-[#D0F569] rounded-full p-4 my-3">
+            <TouchableOpacity
+              className="bg-[#D0F569] rounded-full p-4 my-3"
+              onPress={openPaymentSheet}
+            >
               <Text className="text-black text-center font-bold text-lg">
                 Get Premium Mini
               </Text>

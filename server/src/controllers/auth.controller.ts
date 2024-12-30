@@ -41,7 +41,8 @@ export const signup = async (
     });
 
     await user.save();
-
+    await user.createDefaultSubscription();
+    await user.createCustomerStripe();
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET as string,
@@ -113,7 +114,7 @@ export const login = async (
       });
       return;
     }
-    res.status(200).json({
+    res.status(400).json({
       success: false,
       message: "Invalid email or password",
     });

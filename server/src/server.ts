@@ -12,6 +12,7 @@ import artistRoutes from "./routes/artist.routes";
 import userRoutes from "./routes/user.routes";
 import errorHandler from "./middleware/error.middleware";
 import playlistRoutes from "./routes/playlist.routes";
+import subscriptionRoutes from "./routes/subscription.routes";
 
 // Load environment variables
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/api/v1/artists", artistRoutes);
 app.use("/api/v1/auths", authRoutes);
 app.use("/api/v1/playlists", playlistRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/subscriptions", subscriptionRoutes);
 
 // Initialize global error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

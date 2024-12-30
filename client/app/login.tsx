@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import axiosInstance from "../utils/AxiosInstance";
 import { notifyToast } from "../utils/helpers";
 import { saveUser } from "./redux/slices/AuthSlice";
+import Feather from "@expo/vector-icons/Feather";
 
 export default function Login() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function Login() {
     },
   });
   const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   interface LoginFormData {
     email: string;
@@ -55,6 +57,7 @@ export default function Login() {
           .then((response) => {
             if (response.status === 200) {
               notifyToast("Success", "Login successful!", "success");
+              console.log(response.data);
               if (response.data.user) {
                 const userObj = response.data.user;
                 const userToken = response.data.token;
@@ -62,8 +65,8 @@ export default function Login() {
                 if (user.role === "customer") {
                   dispatch(
                     saveUser({
-                      user: response.data.user,
-                      token: response.data.token,
+                      user: userObj,
+                      token: userToken,
                     })
                   );
                   router.push("/users");
@@ -75,6 +78,8 @@ export default function Login() {
 
                 router.push("artists/");
               }
+            } else if (response.status === 400) {
+              notifyToast("Warning", response.data.message, "warning");
             }
           });
       }
@@ -97,17 +102,15 @@ export default function Login() {
         Login to Melody Mix
       </Text>
 
-      {/* Loading Spinner */}
       {loading && (
         <ActivityIndicator
-          size={80} // Larger spinner size
+          size={80}
           color="#4CAF50"
-          style={styles.spinner}
+          className="absolute top-1/2 left-1/2"
         />
       )}
 
       <View className="w-full">
-        {/* Email Input */}
         <Text className="text-base text-white mx-5 mb-1">Email</Text>
         <Controller
           control={control}
@@ -134,47 +137,55 @@ export default function Login() {
           <Text className="text-red-500 mx-5">{errors.email.message}</Text>
         )}
 
-        {/* Password Input */}
         <Text className="text-base text-white mx-5 mb-1 mt-3">Password</Text>
-        <Controller
-          control={control}
-          name="password"
-          rules={{ required: "Password is required" }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="bg-transparent border border-white rounded-lg mb-1 mx-5 text-white "
-              placeholder="Enter your password"
-              secureTextEntry
-              placeholderTextColor="#B3B3B3"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
+        <View className="relative mx-5">
+          <Controller
+            control={control}
+            name="password"
+            rules={{ required: "Password is required" }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className="bg-transparent border border-white rounded-lg mb-1 text-white w-full pr-10"
+                placeholder="Enter your password"
+                secureTextEntry={!passwordVisible}
+                placeholderTextColor="#B3B3B3"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+          />
+          <TouchableOpacity
+            className="absolute right-3 top-3"
+            onPress={() => setPasswordVisible(!passwordVisible)}
+          >
+            <Feather
+              name={passwordVisible ? "eye" : "eye-off"}
+              size={24}
+              color="white"
             />
-          )}
-        />
+          </TouchableOpacity>
+        </View>
         {errors.password && (
           <Text className="text-red-500 mx-5">{errors.password.message}</Text>
         )}
 
-        {/* Submit Button */}
         <TouchableOpacity
-          className="bg-primary_a0 mx-5"
+          className="bg-primary_a0 mx-5 mt-5 py-3 rounded-lg items-center"
           onPress={handleSubmit(onSubmit)}
-          style={styles.button}
         >
-          <Text style={styles.buttonText}>Submit</Text>
+          <Text className="text-white font-bold text-lg">Submit</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Social Media Icons */}
       <View className="flex flex-row justify-center space-x-4 mt-10 gap-6">
         <Image
           source={require("../assets/images/facebook.png")}
-          style={styles.icon}
+          className="w-8 h-8"
         />
         <Image
           source={require("../assets/images/google.png")}
-          style={styles.icon}
+          className="w-8 h-8"
         />
       </View>
     </SafeAreaView>

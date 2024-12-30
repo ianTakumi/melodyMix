@@ -21,7 +21,7 @@ const CustomHeader = ({ navigation }: CustomHeaderProps) => {
   const user = useAppSelector((state: RootState) => state.auth.user);
 
   return (
-    <View className="pl-4 pt-10 flex flex-row justify-between items-center bg-[#141414]">
+    <View className="pl-4 pt-10 pb-5 flex flex-row justify-between items-center bg-[#141414]">
       {/* Profile Picture */}
       <TouchableOpacity onPress={() => navigation.openDrawer()}>
         <ProfilePicture name={user.data?.name} imageUrl="" size={40} />

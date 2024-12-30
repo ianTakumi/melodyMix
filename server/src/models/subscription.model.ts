@@ -24,7 +24,7 @@ const SubscriptionSchema = new Schema({
     type: String,
     required: [true, "Status is required"],
     default: "Active",
-    enum: ["Active", "Expired", "Cancelled"],
+    enum: ["Active", "Expired", "Cancelled", "Inactive"],
   },
   payment_method: {
     type: String,

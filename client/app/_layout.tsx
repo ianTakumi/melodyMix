@@ -6,17 +6,20 @@ import { createNotifications } from "react-native-notificated";
 const { NotificationsProvider } = createNotifications();
 import "../global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useEffect } from "react";
-import { loadUser } from "./redux/slices/AuthSlice";
-
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { StatusBar } from "react-native";
 export default function Layout() {
+  console.log("STRIPE_PUBLISHABLE_KEY:", process.env.STRIPE_PUBLISHABLE_KEY);
   return (
     <>
+      <StatusBar hidden={true} />
       <Provider store={store}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <NotificationsProvider>
-            <Slot />
-          </NotificationsProvider>
+          <StripeProvider publishableKey={process.env.STRIPE_PUBLISHABLE_KEY}>
+            <NotificationsProvider>
+              <Slot />
+            </NotificationsProvider>
+          </StripeProvider>
         </GestureHandlerRootView>
       </Provider>
     </>

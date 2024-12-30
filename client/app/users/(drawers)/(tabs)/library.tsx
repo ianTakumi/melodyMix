@@ -67,20 +67,6 @@ export default function IndexPage() {
       end={{ x: 0, y: 1 }}
     >
       <SafeAreaView className="flex-1 px-4">
-        {/* Header Section */}
-        <View className="pl-2 pt-10 flex flex-row items-center justify-between">
-          <View className="flex flex-row items-center gap-4">
-            <ProfilePicture name={user.data?.name} imageUrl={""} />
-            <Text className="text-white font-bold font-mono text-3xl">
-              Your Library
-            </Text>
-          </View>
-          <View className="flex flex-row items-center gap-5">
-            <AntDesign name="search1" size={32} color="white" />
-            <AntDesign name="plus" size={32} color="white" />
-          </View>
-        </View>
-
         {/* Content Section */}
         <View className="flex flex-row justify-normal items-center gap-4 mt-5  rounded-full p-2">
           <TouchableOpacity>
