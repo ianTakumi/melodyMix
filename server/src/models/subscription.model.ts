@@ -34,7 +34,28 @@ const SubscriptionSchema = new Schema({
   renewal_date: {
     type: Date,
   },
+  members: {
+    type: [Schema.Types.ObjectId],
+    ref: "User",
+  },
 });
+
+SubscriptionSchema.methods.disableDefaultSubscription = async function (
+  userId: string
+) {
+  try {
+    const subscription = await Subscription.findOne({
+      userId: userId,
+      planType: "Free",
+    });
+    if (subscription) {
+      subscription.status = "Inactive";
+      await subscription.save();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const Subscription = model<ISubscription>("Subscription", SubscriptionSchema);
 export default Subscription;

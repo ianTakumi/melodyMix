@@ -20,6 +20,27 @@ export const getAllUsers = async (
   }
 };
 
+// Get user by ID
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).populate("subscription");
+    if (!user) {
+      return next({ statusCode: 404, message: "User not found" });
+    }
+  } catch (error) {
+    next({
+      statusCode: 500,
+      message: "Update profile unsuccessful",
+      error: (error as Error).message,
+    });
+  }
+};
+
 // Update profile
 export const updateUserProfile = async (
   req: Request,

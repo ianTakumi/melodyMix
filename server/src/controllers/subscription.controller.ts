@@ -26,7 +26,7 @@ export const getAllSubscription = async (
   }
 };
 
-// Create subscription
+// Create payment intent
 export const createPaymentIntent = async (
   req: Request,
   res: Response,
@@ -35,6 +35,7 @@ export const createPaymentIntent = async (
   try {
     const { userId } = req.params;
     const { amount, subscriptionType } = req.body;
+    console.log(req.body);
     const user = await User.findById(userId);
 
     // Return if no user is found
@@ -52,7 +53,7 @@ export const createPaymentIntent = async (
     );
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 5000,
+      amount: amount * 100,
       currency: "php",
       customer: user.stripeCustomerId,
     });
@@ -68,6 +69,84 @@ export const createPaymentIntent = async (
     next({
       statusCode: 500,
       message: "An error occurred while creating subscription",
+      error: (error as Error).message,
+    });
+  }
+};
+
+// Create subscription
+export const createSubscription = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const { planType } = req.body;
+    const user = await User.findById(userId);
+
+    const start_date = new Date();
+    const end_date = new Date(start_date);
+
+    switch (planType) {
+      case "Mini":
+        end_date.setDate(end_date.getDate() + 7);
+        break;
+      default:
+        end_date.setMonth(end_date.getMonth() + 2);
+    }
+
+    const subscription = new Subscription({
+      userId,
+      planType,
+      start_date,
+      end_date,
+    });
+
+    await subscription.save();
+    res.status(201).json({
+      success: true,
+      data: subscription,
+      message: "Subscription created successfully",
+    });
+  } catch (error) {
+    console.error("Error creating subscription:", error);
+    next({
+      statusCode: 500,
+      message: "An error occurred while retrieving subscriptions",
+      error: (error as Error).message,
+    });
+  }
+};
+
+// Cancel subscription
+export const cancelSubscription = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { subscriptionId } = req.params;
+    const subscription = await Subscription.findById(subscriptionId);
+
+    if (!subscription) {
+      next({
+        statusCode: 404,
+        message: "Subscription not found",
+      });
+      return;
+    }
+
+    subscription.status = "Cancelled";
+    await subscription.save();
+    res
+      .status(200)
+      .json({ success: true, message: "Subscription cancelled successfully" });
+  } catch (error) {
+    console.error("Error cancelling subscription:", error);
+    next({
+      statusCode: 500,
+      message: "An error occurred while cancelling subscription",
       error: (error as Error).message,
     });
   }
