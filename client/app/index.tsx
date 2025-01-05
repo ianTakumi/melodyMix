@@ -6,7 +6,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Link } from "expo-router";
-import { loadUser, saveUser } from "./redux/slices/AuthSlice";
+import { loadArtist, loadUser, saveUser } from "./redux/slices/AuthSlice";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
@@ -19,12 +19,18 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Dispatch the loadUser action to check if a user is logged in
     dispatch(loadUser());
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(loadArtist());
+  }, [dispatch]);
   const isAuthenticated = useAppSelector(
     (state) => state.auth.user.isAuthenticated
+  );
+
+  const isArtistAuthenticated = useAppSelector(
+    (state) => state.auth.artist.isAuthenticated
   );
 
   useEffect(() => {
@@ -39,6 +45,19 @@ export default function App() {
       router.push("/users"); // Redirect to the home screen or any other screen
     }
   }, [isAuthenticated, router]);
+
+  useEffect(() => {
+    // Wait for the state to load before performing the navigation
+    if (isArtistAuthenticated === null) return; // Skip if state is not yet loaded
+    console.log(isArtistAuthenticated);
+    // Once the authentication status is determined, set loading to false
+    setLoading(false);
+
+    // If the user is authenticated, push them to the appropriate screen
+    if (isArtistAuthenticated) {
+      router.push("/artists"); // Redirect to the home screen or any other screen
+    }
+  }, [isArtistAuthenticated, router]);
 
   if (loading) {
     // Render a loading screen or splash screen while waiting for auth state

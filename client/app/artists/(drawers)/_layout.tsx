@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import { MaterialIcons, Entypo, Feather, AntDesign } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, usePathname, useRouter } from "expo-router";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import ProfilePicture from "../../../components/ProfilePicture";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -16,28 +16,36 @@ type CustomHeaderProps = {
   navigation: DrawerNavigationProp<any, any>;
 };
 
+const getHeaderTitle = (pathTitle: string) => {
+  switch (pathTitle) {
+    case "":
+      return "Dashboard";
+    case "store":
+      return "My Store";
+    case "albums":
+      return "My Albums";
+  }
+};
+
 // Custom Header with Profile Picture and Icon Buttons
 const CustomHeader = ({ navigation }: CustomHeaderProps) => {
-  const user = useAppSelector((state: RootState) => state.auth.user);
-
+  const artist = useAppSelector((state: RootState) => state.auth.artist);
+  const pathName = usePathname();
+  const pathTitle = pathName.split("/").slice(2).join("/");
   return (
-    <View className="pl-4 pt-10 flex flex-row justify-between items-center bg-[#141414]">
+    <View className="pl-4 pt-10 pb-5 flex flex-row justify-between items-center bg-[#141414]">
       {/* Profile Picture */}
-      <TouchableOpacity onPress={() => navigation.openDrawer()}>
-        <ProfilePicture name={user.data?.name} imageUrl="" size={40} />
-        {/* Replace with actual name and image */}
-      </TouchableOpacity>
-
-      {/* Title */}
-      <Text className="text-white font-bold font-mono text-3xl">
-        Made for You
-      </Text>
-
-      {/* Right Icons */}
-      <View className="flex-row justify-center items-center gap-5 space-x-4">
-        <MaterialIcons name="notifications-none" size={32} color="white" />
-        <Entypo name="back-in-time" size={32} color="white" />
-        <Feather name="settings" size={32} color="white" />
+      <View className="flex flex-row items-center gap-4">
+        <TouchableOpacity
+          onPress={() => navigation.openDrawer()}
+          className="mr-0"
+        >
+          <ProfilePicture name={artist.data?.name} imageUrl="" size={40} />
+          {/* Replace with actual name and image */}
+        </TouchableOpacity>
+        <Text className="text-white font-bold font-mono text-3xl ">
+          {getHeaderTitle(pathTitle)}
+        </Text>
       </View>
     </View>
   );
@@ -64,7 +72,7 @@ const CustomDrawerContent = (props: any) => {
       {/* Custom content inside the Drawer */}
 
       <TouchableOpacity>
-        <Link href="/users/profile">
+        <Link href="/artists/profile">
           <View className="p-4 flex flex-row items-center mt-3">
             <ProfilePicture name={artist.data?.name} size={50} />
             <View className="ml-4">
@@ -80,15 +88,6 @@ const CustomDrawerContent = (props: any) => {
 
       {/* Main content */}
       <View className="mx-5 my-6 ">
-        <View className="flex flex-row items-center mb-6">
-          <Entypo
-            name="back-in-time"
-            size={25}
-            color="white"
-            className="mr-5"
-          />
-          <Text className="text-white font-bold text-xl ">Recents</Text>
-        </View>
         <View className="flex flex-row items-center mb-6">
           <AntDesign name="setting" size={24} color="white" className="mr-5" />
           <Text className="text-white font-bold text-xl ">Settings</Text>
@@ -111,18 +110,10 @@ const Layout = () => {
       screenOptions={{
         header: (props) => <CustomHeader {...props} />, // Use the custom header
         drawerContentStyle: { backgroundColor: "#1F1F1F" }, // Drawer background color
-        drawerStyle: { backgroundColor: "#141414" }, // Optional: Make the drawer background black
+        drawerStyle: { backgroundColor: "#141414" }, // Optional: Make the drawer background black\
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />} // Use custom drawer content
-    >
-      <Drawer.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          headerShown: true,
-        }}
-      />
-    </Drawer>
+    ></Drawer>
   );
 };
 

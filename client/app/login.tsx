@@ -16,8 +16,9 @@ import { useRouter } from "expo-router";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import axiosInstance from "../utils/AxiosInstance";
 import { notifyToast } from "../utils/helpers";
-import { saveUser } from "./redux/slices/AuthSlice";
+import { saveArtist, saveUser } from "./redux/slices/AuthSlice";
 import Feather from "@expo/vector-icons/Feather";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const router = useRouter();
@@ -57,7 +58,6 @@ export default function Login() {
           .then((response) => {
             if (response.status === 200) {
               notifyToast("Success", "Login successful!", "success");
-              console.log(response.data);
               if (response.data.user) {
                 const userObj = response.data.user;
                 const userToken = response.data.token;
@@ -74,8 +74,9 @@ export default function Login() {
                   router.push("/admin");
                 }
               } else if (response.data.artist) {
-                const artist = response.data.artist;
-
+                const artistObj = response.data.artist;
+                const artistToken = response.data.token;
+                dispatch(saveArtist({ artist: artistObj, token: artistToken }));
                 router.push("artists/");
               }
             } else if (response.status === 400) {

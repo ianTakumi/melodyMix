@@ -9,7 +9,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { StatusBar } from "react-native";
 export default function Layout() {
-  console.log("STRIPE_PUBLISHABLE_KEY:", process.env.STRIPE_PUBLISHABLE_KEY);
   return (
     <>
       <StatusBar hidden={true} />

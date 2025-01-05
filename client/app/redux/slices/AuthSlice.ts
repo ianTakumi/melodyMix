@@ -101,14 +101,11 @@ export const saveUser = createAsyncThunk(
 export const saveArtist = createAsyncThunk(
   "auth/saveArtist",
   async ({ artist, token }: { artist: any; token: string }) => {
+    console.log("Artist data: ", artist);
+    console.log("Artist token: ", token);
     await AsyncStorage.setItem("artistJwt", token);
     await AsyncStorage.setItem("artistData", JSON.stringify(artist));
-    const savedToken = AsyncStorage.getItem("artistJwt");
-    const savedArtist = AsyncStorage.getItem("artistData");
-
-    console.log("Artist saved token: ", savedToken);
-    console.log("Artist data: ", savedArtist);
-    return { isAuthenticated: true, data: artist.data, token: artist.token };
+    return { isAuthenticated: true, data: artist, token: artist };
   }
 );
 
@@ -168,7 +165,9 @@ const authSlice = createSlice({
       state.user.token = action.payload.token;
     });
     builder.addCase(saveArtist.fulfilled, (state, action) => {
-      state.artist = action.payload;
+      state.artist.isAuthenticated = action.payload.isAuthenticated;
+      state.artist.data = action.payload.data;
+      state.artist.token = action.payload.token;
     });
     builder.addCase(updateUser.fulfilled, (state, action) => {
       state.user.data = action.payload;
