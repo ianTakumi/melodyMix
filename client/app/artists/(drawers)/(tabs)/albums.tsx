@@ -20,7 +20,7 @@ export default function AlbumPage() {
   return (
     <SafeAreaView className="flex-1 px-4 bg-[#121212]">
       {/* Content Section */}
-      <View>
+      <View className="w-4/12">
         <TouchableOpacity className="bg-primary_a0 flex-row items-center rounded-xl py-2 px-4">
           <AntDesign name="plus" size={24} color="black" />
           <Text className="ml-2 text-black">Add albums</Text>

@@ -33,7 +33,7 @@ const CustomHeader = ({ navigation }: CustomHeaderProps) => {
   const pathName = usePathname();
   const pathTitle = pathName.split("/").slice(2).join("/");
   return (
-    <View className="pl-4 pt-10 pb-5 flex flex-row justify-between items-center bg-[#141414]">
+    <View className="pl-4 pt-10 pb-5 flex flex-row justify-between items-center bg-[#121212]">
       {/* Profile Picture */}
       <View className="flex flex-row items-center gap-4">
         <TouchableOpacity
