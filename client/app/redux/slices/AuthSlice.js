@@ -1,67 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { jwtDecode } from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ISubscription } from "../types/subscription";
 
-interface UserData {
-  _id: string;
-  subscription: string | ISubscription;
-  stripeCustomerId: string;
-  name: string;
-  email: string;
-  dob: Date;
-  gender: string;
-  role: string;
-  fcm_token: string | null;
-  phoneNumber: string;
-  profile_picture: {
-    public_id: string;
-    url: string;
-  };
-  socialAccounts: {
-    provider: string;
-    provider_id: string;
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface ArtistData {
-  _id: string;
-  name: string;
-  bio: string | null;
-  email: string;
-  phoneNumber: string;
-  profile_picture: {
-    public_id: string;
-    url: string;
-  };
-  followersCount: Number;
-  socMedLinks: {
-    platform: string;
-    url: string;
-  }[];
-  fcm_token: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface User {
-  isAuthenticated: boolean | null;
-  data: UserData | null;
-  token: string | null;
-}
-
-interface Artist {
-  isAuthenticated: boolean | null;
-  data: ArtistData | null;
-  token: string | null;
-}
-
-interface AuthState {
-  user: User;
-  artist: Artist;
-}
 // Load user and artist from AsyncStorage and decode the token
 export const loadUser = createAsyncThunk("auth/loadUser", async () => {
   const token = await AsyncStorage.getItem("userJwt");
@@ -85,53 +24,47 @@ export const loadArtist = createAsyncThunk("auth/loadArtist", async () => {
 // Save user and artist data to AsyncStorage
 export const saveUser = createAsyncThunk(
   "auth/saveUser",
-  async ({ user, token }: { user: any; token: string }) => {
+  async ({ user, token }) => {
     await AsyncStorage.setItem("userJwt", token);
     await AsyncStorage.setItem("userData", JSON.stringify(user));
-    const savedToken = await AsyncStorage.getItem("userJwt");
-    const savedUser = await AsyncStorage.getItem("userData");
-
-    console.log("Saved token:", savedToken);
-    console.log("Saved user:", savedUser);
-    return { isAuthenticated: true, data: user, token: token };
+    return { isAuthenticated: true, data: user, token };
   }
 );
 
-// Save artist data to async storage
 export const saveArtist = createAsyncThunk(
   "auth/saveArtist",
-  async ({ artist, token }: { artist: any; token: string }) => {
-    console.log("Artist data: ", artist);
-    console.log("Artist token: ", token);
+  async ({ artist, token }) => {
     await AsyncStorage.setItem("artistJwt", token);
     await AsyncStorage.setItem("artistData", JSON.stringify(artist));
-    return { isAuthenticated: true, data: artist, token: artist };
+    return { isAuthenticated: true, data: artist, token };
   }
 );
 
 export const updateUser = createAsyncThunk(
   "auth/updateUser",
-  async ({ user }: { user: UserData }) => {
-    AsyncStorage.removeItem("userData");
+  async ({ user }) => {
+    await AsyncStorage.removeItem("userData");
     await AsyncStorage.setItem("userData", JSON.stringify(user));
     return user;
   }
 );
 
+const initialState = {
+  user: {
+    isAuthenticated: null,
+    data: null,
+    token: null,
+  },
+  artist: {
+    isAuthenticated: null,
+    data: null,
+    token: null,
+  },
+};
+
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    user: {
-      isAuthenticated: null as boolean | null,
-      data: null as UserData | null, // Changed to null
-      token: null as string | null,
-    },
-    artist: {
-      isAuthenticated: null as boolean | null,
-      data: null as ArtistData | null,
-      token: null as string | null,
-    },
-  } as AuthState,
+  initialState,
   reducers: {
     logoutUser: (state) => {
       state.user.isAuthenticated = false;

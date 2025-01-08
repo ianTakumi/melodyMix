@@ -18,7 +18,6 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { useAppDispatch } from "./redux/hooks";
-import { setUser } from "./redux/slices/UserSlice";
 import { useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -74,7 +73,7 @@ const Signup = () => {
           data.email,
           data.password
         );
-        dispatch(setUser(response.data.user));
+        // dispatch(setUser(response.data.user));
         router.push("/users");
       } else {
         setErrorMessage(response.data.message || "Registration failed");
