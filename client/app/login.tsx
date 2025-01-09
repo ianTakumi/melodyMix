@@ -18,7 +18,6 @@ import axiosInstance from "../utils/AxiosInstance";
 import { notifyToast } from "../utils/helpers";
 import { saveArtist, saveUser } from "./redux/slices/AuthSlice";
 import Feather from "@expo/vector-icons/Feather";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const router = useRouter();

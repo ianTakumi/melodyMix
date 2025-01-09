@@ -10,7 +10,6 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
-import ProfilePicture from "../../../../components/ProfilePicture";
 import { useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
 
