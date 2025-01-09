@@ -1,7 +1,14 @@
-import { SafeAreaView, View, Text, TextInput } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
+import { useRouter } from "expo-router";
 
 interface CreateCategoryFormData {
   name: string;
@@ -22,23 +29,32 @@ const createCategory = () => {
     },
   });
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data: CreateCategoryFormData) => {
     console.log(data);
     setLoading(true);
   };
 
+  const redirectBack = () => {
+    router.back();
+  };
+
   return (
-    <SafeAreaView className="bg-[#121212] flex-1">
+    <SafeAreaView className="bg-[#121212] flex-1 px-5 py-10">
       {/* form container */}
-      <View className="p-7">
+      <View className="">
         {/* Title and back icon */}
         <View className="flex items-center  flex-row gap-5">
-          <Ionicons name="arrow-back-outline" size={26} color="white" />
+          <TouchableOpacity onPress={redirectBack}>
+            <Ionicons name="arrow-back-outline" size={26} color="white" />
+          </TouchableOpacity>
           <Text className="text-white text-2xl font-bold">Create Category</Text>
         </View>
+        {/* Image container */}
+        <View>z</View>
         {/* Inputs container */}
-        <View className=" mt-5">
+        <View className=" mt-8">
           {/* Name input container */}
           <View className="">
             <Text className="text-base text-white mx-5 mb-1">Name</Text>

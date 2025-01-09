@@ -7,12 +7,8 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Entypo from "@expo/vector-icons/Entypo";
-import Feather from "@expo/vector-icons/Feather";
 import { useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
-import ProfilePicture from "../../../../components/ProfilePicture";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import axiosInstance from "../../../../utils/AxiosInstance";
 import { useRouter } from "expo-router";
