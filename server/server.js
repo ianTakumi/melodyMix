@@ -14,6 +14,8 @@ import errorHandler from "./middleware/error.middleware.js";
 import playlistRoutes from "./routes/playlist.routes.js";
 import subscriptionRoutes from "./routes/subscription.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
+import ProductRoutes from "./routes/product.routes.js";
+
 // Load environment variables
 dotenv.config();
 
@@ -33,6 +35,7 @@ app.use("/api/v1/playlists", playlistRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/subscriptions", subscriptionRoutes);
 app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/products", ProductRoutes);
 
 // Initialize global error handler
 app.use((err, req, res, next) => {

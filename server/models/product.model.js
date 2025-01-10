@@ -20,17 +20,6 @@ const ProductSchema = new Schema(
     category: {
       type: String,
       required: [true, "Category is required"],
-      enum: [
-        "Clothing",
-        "Music & Vinyl",
-        "Accessories",
-        "Collectibles",
-        "Home Decor",
-        "Live Event Merchandise",
-        "Special Editions",
-        "Beauty & Lifestyle",
-        "Tech Gadgets",
-      ],
     },
     images: [
       {
@@ -60,6 +49,13 @@ const ProductSchema = new Schema(
   },
   { collection: "products", timestamps: true }
 );
+
+ProductSchema.methods.deleteImages = async function () {
+  try {
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const Product = model("Product", ProductSchema);
 export default Product;
