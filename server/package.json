@@ -1,10 +1,11 @@
 {
   "name": "backend",
+  "type": "module",
   "version": "1.0.0",
   "description": "Backend for a spotify clone ",
   "scripts": {
     "test": "jest",
-    "dev": "echo 'Starting the backend server...' &&  nodemon src/server.ts"
+    "dev": "echo 'Starting the backend server...' &&  nodemon server.js"
   },
   "authors": [
     {
