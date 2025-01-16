@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   Text,
@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 
 export default function StorePage() {
   const artist = useAppSelector((state) => state.auth.artist);
+  const [categories, setCategories] = useState([]);
   const router = useRouter();
 
   const fetchProducts = async () => {
@@ -24,14 +25,20 @@ export default function StorePage() {
   };
 
   const fetchCategories = async () => {
-    axiosInstance.get(`/categories/${artist.data?._id}`).then((res) => {
+    axiosInstance.get(`/categories/artist/${artist.data?._id}`).then((res) => {
       console.log(res.data);
+      setCategories(res.data.data);
     });
   };
 
   const redirectToCreateCategoryForm = () => {
     router.push("/artists/createCategory");
   };
+
+  useEffect(() => {
+    // fetchProducts();
+    fetchCategories();
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 px-4 bg-[#121212]">
@@ -67,6 +74,20 @@ export default function StorePage() {
             </Text>
           </View>
           <View className="flex flex-row flex-wrap justify-between">
+            {categories.map((category) => (
+              <View key={category._id} className="m-5 items-center">
+                {/* Image Section */}
+                <Image
+                  source={{ uri: category.image.url }}
+                  className="w-24 h-24 rounded-lg"
+                  resizeMode="cover"
+                />
+                {/* Text Section */}
+                <Text className="text-white mt-2 text-base">
+                  {category.name}
+                </Text>
+              </View>
+            ))}
             <TouchableOpacity onPress={redirectToCreateCategoryForm}>
               <View className="m-6 items-center">
                 {/* Image Section */}

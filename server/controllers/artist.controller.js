@@ -19,6 +19,25 @@ export const getAllArtist = async (req, res, next) => {
   }
 };
 
+// Get the total number of artist
+export const getNumberOfArtist = async (req, res, next) => {
+  try {
+    const numberOfArtists = await Artist.countDocuments();
+    res.status(200).json({
+      success: true,
+      message: "Successfully fetched the number of artists!",
+      data: numberOfArtists,
+    });
+  } catch (error) {
+    console.error("Error fetching artists", error);
+    next({
+      statusCode: 500,
+      message: "An error occurred while retrieving artists",
+      error: error.message,
+    });
+  }
+};
+
 export const deleteArtist = async (req, res, next) => {
   try {
     const { artistId } = req.params;

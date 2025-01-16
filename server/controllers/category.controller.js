@@ -44,7 +44,12 @@ export const getCategoryById = async (req, res, next) => {
 export const getCategoryByArtistId = async (req, res, next) => {
   try {
     const { artistId } = req.params;
-    const category = await Category.find({ artistId });
+    const categories = await Category.find({ artist: artistId });
+    res.status(200).json({
+      success: true,
+      message: "Successfully fetched categories!",
+      data: categories,
+    });
   } catch (error) {
     next({
       statusCode: 500,
@@ -58,7 +63,9 @@ export const getCategoryByArtistId = async (req, res, next) => {
 export const createCategory = async (req, res, next) => {
   try {
     const { artistId } = req.params;
+    console.log(req.params);
     const { name, description } = req.body;
+    console.log(req.file);
 
     if (!name || !description || !artistId) {
       next({
