@@ -108,6 +108,11 @@ export const login = async (req, res, next) => {
 // google login
 export const googleLogin = async (req, res, next) => {
   try {
+    const { email, name } = req.body;
+
+    if (!email || !name) {
+      return next({ statusCode: 400, message: "All fields are required" });
+    }
   } catch (error) {
     console.log("Error google log in", error);
     next(error);

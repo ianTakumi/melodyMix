@@ -15,6 +15,8 @@ import playlistRoutes from "./routes/playlist.routes.js";
 import subscriptionRoutes from "./routes/subscription.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import ProductRoutes from "./routes/product.routes.js";
+import AlbumRoutes from "./routes/Album.routes.js";
+import SongRoutes from "./routes/song.routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -36,13 +38,13 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/subscriptions", subscriptionRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/products", ProductRoutes);
+app.use("/api/v1/albums", AlbumRoutes);
+app.use("/api/v1/songs", SongRoutes);
 
-// Initialize global error handler
 app.use((err, req, res, next) => {
   errorHandler(err, req, res, next);
 });
 
-// MongoDB Connection and Server Initialization
 const mongoUrl = process.env.MONG_URL;
 const port = parseInt(process.env.PORT || "5000", 10);
 
@@ -62,4 +64,5 @@ mongoose
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });
+
 export default app;

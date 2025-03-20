@@ -18,7 +18,7 @@ const SongSchema = new Schema({
     trim: true,
   },
   genres: {
-    type: [String],
+    type: String,
     required: [true, "Genres are required"],
     enum: [
       "Pop",

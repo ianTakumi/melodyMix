@@ -1,4 +1,3 @@
-import { Request, Response, NextFunction } from "express";
 import Song from "../models/song.model.js";
 
 // Get all songs
@@ -11,6 +10,22 @@ export const getAllSongs = async (req, res, next) => {
       message: "Songs retrieved successfully",
       data: songs,
     });
+  } catch (error) {
+    console.error("Error fetching songs:", error);
+    next({
+      statusCode: 500,
+      message: "An error occurred while retrieving songs",
+      error: error.message,
+    });
+  }
+};
+
+export const getSongByAlbumId = async (req, res, next) => {
+  try {
+    const { albumId } = req.params;
+
+    if (!albumId) {
+    }
   } catch (error) {
     console.error("Error fetching songs:", error);
     next({
@@ -46,11 +61,28 @@ export const createSong = async (req, res, next) => {
   try {
     const { artistId } = req.params;
     const { albumId, title, genres, duration, lyrics } = req.body;
+
+    console.log("req.body", req.body);
   } catch (error) {
     console.log("Error creating songs", error);
     next({
       statusCode: 500,
       message: "An error occured while adding your song",
+      error: error.message,
+    });
+  }
+};
+
+// Update a song
+export const updateSong = async (req, res, next) => {
+  try {
+    const { songId } = req.params;
+    const { title, genres } = req.body;
+  } catch (error) {
+    console.log("Error updating song", error);
+    next({
+      statusCode: 500,
+      message: "An error occured while updating your song",
       error: error.message,
     });
   }

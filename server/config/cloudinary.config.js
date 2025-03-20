@@ -30,4 +30,35 @@ export const uploadToCloudinary = (file) => {
   });
 };
 
+export const uploadCloudinary = (file, folderName) => {
+  return new Promise((resolve, reject) => {
+    if (!allowedTypes.includes(file.mimetype)) {
+      reject(
+        new Error("Invalid file type. Only JPEG, PNG, and GIF are allowed.")
+      );
+    }
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: folderName },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    streamifier.createReadStream(file.buffer).pipe(uploadStream);
+  });
+};
+
+export const removeFromCloudinary = (publicId) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.destroy(publicId, (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 export default cloudinary;

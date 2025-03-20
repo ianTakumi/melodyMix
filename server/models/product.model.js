@@ -20,19 +20,31 @@ const ProductSchema = new Schema(
     category: {
       type: String,
       required: [true, "Category is required"],
+      enum: [
+        "T-Shirt",
+        "Hoodie",
+        "Cap",
+        "Poster",
+        "Sticker",
+        "Vinyl",
+        "CD",
+        "Cassette",
+        "Keychain",
+        "Mug",
+        "Other",
+      ],
     },
-    images: [
-      {
-        public_id: {
-          type: String,
-          trim: true,
-        },
-        url: {
-          type: String,
-          trim: true,
-        },
+    image: {
+      public_id: {
+        type: String,
+        trim: true,
       },
-    ],
+      url: {
+        type: String,
+        trim: true,
+      },
+    },
+
     stock: {
       type: Number,
       required: [true, "Number of stock is required"],

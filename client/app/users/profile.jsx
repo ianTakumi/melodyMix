@@ -4,6 +4,7 @@ import { useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import ProfilePicture from "../../components/ProfilePicture";
 import { useRouter } from "expo-router";
+
 const profile = () => {
   const user = useAppSelector((state) => state.auth.user);
   const router = useRouter();
@@ -11,6 +12,7 @@ const profile = () => {
   const handleRedirectToProfile = () => {
     router.push("users/updateProfile");
   };
+
   return (
     <LinearGradient
       className="flex-1"

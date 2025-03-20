@@ -46,7 +46,8 @@
     "react-native-svg": "^15.10.1",
     "react-native-ui-datepicker": "^2.0.4",
     "react-redux": "^9.2.0",
-    "expo-image-picker": "~16.0.3"
+    "expo-image-picker": "~16.0.3",
+    "expo-document-picker": "~13.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

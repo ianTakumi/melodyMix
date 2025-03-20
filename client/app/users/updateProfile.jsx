@@ -14,12 +14,16 @@ import { useRouter } from "expo-router";
 import { notifyToast } from "../../utils/helpers";
 import { useAppDispatch } from "../redux/hooks";
 import { updateUser } from "../redux/slices/AuthSlice";
+import * as ImagePicker from "expo-image-picker";
 
 const UpdateProfile = () => {
   const user = useAppSelector((state) => state.auth.user);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [profileImage, setProfileImage] = useState("");
+
   const data = [
     { key: "Man", value: "Man" },
     { key: "Woman", value: "Woman" },
@@ -62,8 +66,37 @@ const UpdateProfile = () => {
     });
   };
 
+  const pickImage = async (fromCamera) => {
+    let result;
+    try {
+      if (fromCamera) {
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      } else {
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+    } finally {
+      onClose(); // Ensure modal closes even if an error occurs
+    }
+  };
+
   const handleClose = () => {
     router.back();
+  };
+
+  const updateProfilePicture = () => {
+    console.log("Update profile picture");
   };
 
   return (
@@ -77,9 +110,17 @@ const UpdateProfile = () => {
           <Text className="text-gray-700 text-xl">Save</Text>
         </TouchableOpacity>
       </View>
+
       <View className="mx-3 my-8 flex items-center">
-        <ProfilePicture name={user.data?.name} imageUrl={""} size={120} />
+        <TouchableOpacity onPress={() => pickImage(false)}>
+          <ProfilePicture
+            name={user.data.name}
+            imageUrl={profileImage}
+            size={120}
+          />
+        </TouchableOpacity>
       </View>
+
       <View className="flex flex-row mt-7 mx-3  py-2 border-b border-[#202020] items-center">
         <Text className="text-white text-xl font-bold mr-10">Name</Text>
         <Controller

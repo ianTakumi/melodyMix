@@ -29,6 +29,7 @@ const AlbumSchema = new Schema({
   song_count: {
     type: Number,
     required: [true, "Song count is required"],
+    default: 0,
   },
   genres: {
     type: [String],
@@ -49,6 +50,7 @@ const AlbumSchema = new Schema({
   duration: {
     type: Number,
     required: [true, "Duration is required"],
+    default: 0,
   },
 });
 
