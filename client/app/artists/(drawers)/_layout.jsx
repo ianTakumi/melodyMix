@@ -7,9 +7,10 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import ProfilePicture from "../../../components/ProfilePicture";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import { logoutUser } from "../../redux/slices/AuthSlice";
+import { logoutArtist } from "../../redux/slices/AuthSlice";
 import { router } from "expo-router";
 import { notifyToast } from "../../../utils/helpers";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const getHeaderTitle = (pathTitle) => {
   switch (pathTitle) {
@@ -52,7 +53,7 @@ const CustomDrawerContent = (props) => {
   const dispatch = useAppDispatch();
   const handleLogout = () => {
     console.log("Successfully log out");
-    dispatch(logoutUser());
+    dispatch(logoutArtist());
     notifyToast("Success", "Logout Successfully", "success");
     router.push("login");
   };
@@ -83,10 +84,17 @@ const CustomDrawerContent = (props) => {
 
       {/* Main content */}
       <View className="mx-5 my-6 ">
-        <View className="flex flex-row items-center mb-6">
-          <AntDesign name="setting" size={24} color="white" className="mr-5" />
-          <Text className="text-white font-bold text-xl ">Settings</Text>
-        </View>
+        <TouchableOpacity onPress={() => router.push("/artists/Orders")}>
+          <View className="flex flex-row items-center mb-6">
+            <MaterialCommunityIcons
+              name="package-variant-closed"
+              size={24}
+              color="white"
+              className="mr-5"
+            />
+            <Text className="text-white font-bold text-xl">My Order</Text>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handleLogout}>
           <View className="flex flex-row items-center">
             <AntDesign name="logout" size={24} color="white" className="mr-5" />

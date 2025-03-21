@@ -17,7 +17,7 @@ import categoryRoutes from "./routes/category.routes.js";
 import ProductRoutes from "./routes/product.routes.js";
 import AlbumRoutes from "./routes/Album.routes.js";
 import SongRoutes from "./routes/song.routes.js";
-
+import OrderRoutes from "./routes/order.routes.js";
 // Load environment variables
 dotenv.config();
 
@@ -30,6 +30,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // Routes
+app.use("/api/v1/orders", OrderRoutes);
 app.use("/api/v1/contacts", contactRoutes);
 app.use("/api/v1/artists", artistRoutes);
 app.use("/api/v1/auths", authRoutes);

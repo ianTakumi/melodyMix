@@ -153,6 +153,8 @@ export default function ProductForm() {
           data={categories}
           placeholder="Select a category"
           boxStyles={{ marginBottom: 10, backgroundColor: "#1E1E1E" }}
+          dropdownTextStyles={{ color: "white" }}
+          inputStyles={{ color: "white" }}
         />
         {errors.category && (
           <Text className="text-red-400">{errors.category.message}</Text>

@@ -3,29 +3,22 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import { MaterialIcons, Entypo, Feather, AntDesign } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
 import ProfilePicture from "../../../components/ProfilePicture";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { RootState } from "../../redux/store";
 import { logoutUser } from "../../redux/slices/AuthSlice";
 import { router } from "expo-router";
 import { notifyToast } from "../../../utils/helpers";
-
-// Define the type for navigation prop
-type CustomHeaderProps = {
-  navigation: DrawerNavigationProp<any, any>;
-};
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 // Custom Header with Profile Picture and Icon Buttons
-const CustomHeader = ({ navigation }: CustomHeaderProps) => {
-  const user = useAppSelector((state: RootState) => state.auth.user);
+const CustomHeader = ({ navigation }) => {
+  const user = useAppSelector((state) => state.auth.user);
 
   return (
     <View className="pl-4 pt-10 pb-5 flex flex-row justify-between items-center bg-[#141414]">
       {/* Profile Picture */}
       <TouchableOpacity onPress={() => navigation.openDrawer()}>
         <ProfilePicture name={user.data?.name} imageUrl="" size={40} />
-        {/* Replace with actual name and image */}
       </TouchableOpacity>
 
       {/* Title */}
@@ -44,25 +37,26 @@ const CustomHeader = ({ navigation }: CustomHeaderProps) => {
 };
 
 // Custom Drawer Content
-const CustomDrawerContent = (props: any) => {
-  const user = useAppSelector((state: RootState) => state.auth.user);
+const CustomDrawerContent = (props) => {
+  const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
+
   const handleLogout = () => {
-    console.log("Successfully log out");
+    console.log("Successfully logged out");
     dispatch(logoutUser());
     notifyToast("Success", "Logout Successfully", "success");
     router.push("login");
   };
+
   return (
     <ScrollView
       {...props}
       contentContainerStyle={{
         flexGrow: 1,
-        backgroundColor: "#141414", // Drawer background color
+        backgroundColor: "#141414",
       }}
     >
-      {/* Custom content inside the Drawer */}
-
+      {/* User Profile */}
       <TouchableOpacity>
         <Link href="/users/profile">
           <View className="p-4 flex flex-row items-center mt-3">
@@ -75,11 +69,35 @@ const CustomDrawerContent = (props: any) => {
         </Link>
       </TouchableOpacity>
 
-      {/* break line */}
+      {/* Divider */}
       <View className="border-b border-[#353535]"></View>
 
-      {/* Main content */}
-      <View className="mx-5 my-6 ">
+      {/* Drawer Items */}
+      <View className="mx-5 my-6">
+        <TouchableOpacity onPress={() => router.push("/users/Carts")}>
+          <View className="flex flex-row items-center mb-6">
+            <AntDesign
+              name="shoppingcart"
+              size={24}
+              color="white"
+              className="mr-5"
+            />
+            <Text className="text-white font-bold text-xl">My Cart</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push("/users/Orders")}>
+          <View className="flex flex-row items-center mb-6">
+            <MaterialCommunityIcons
+              name="package-variant-closed"
+              size={24}
+              color="white"
+              className="mr-5"
+            />
+            <Text className="text-white font-bold text-xl">My Order</Text>
+          </View>
+        </TouchableOpacity>
+
         <View className="flex flex-row items-center mb-6">
           <Entypo
             name="back-in-time"
@@ -87,16 +105,17 @@ const CustomDrawerContent = (props: any) => {
             color="white"
             className="mr-5"
           />
-          <Text className="text-white font-bold text-xl ">Recents</Text>
+          <Text className="text-white font-bold text-xl">Recents</Text>
         </View>
         <View className="flex flex-row items-center mb-6">
           <AntDesign name="setting" size={24} color="white" className="mr-5" />
-          <Text className="text-white font-bold text-xl ">Settings</Text>
+          <Text className="text-white font-bold text-xl">Settings</Text>
         </View>
+
         <TouchableOpacity onPress={handleLogout}>
           <View className="flex flex-row items-center">
             <AntDesign name="logout" size={24} color="white" className="mr-5" />
-            <Text className="text-white font-bold text-xl ">Logout</Text>
+            <Text className="text-white font-bold text-xl">Logout</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -109,11 +128,11 @@ const Layout = () => {
   return (
     <Drawer
       screenOptions={{
-        header: (props) => <CustomHeader {...props} />, // Use the custom header
-        drawerContentStyle: { backgroundColor: "#1F1F1F" }, // Drawer background color
-        drawerStyle: { backgroundColor: "#141414" }, // Optional: Make the drawer background black
+        header: (props) => <CustomHeader {...props} />,
+        drawerContentStyle: { backgroundColor: "#1F1F1F" },
+        drawerStyle: { backgroundColor: "#141414" },
       }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />} // Use custom drawer content
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
         name="profile"

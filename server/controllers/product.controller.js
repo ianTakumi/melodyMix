@@ -4,12 +4,11 @@ import cloudinary, {
   removeFromCloudinary,
   uploadCloudinary,
 } from "../config/cloudinary.config.js";
-import Category from "../models/category.model.js";
 
 // Get all products
 export const getAllProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate("artistId").exec();
     res.status(200).json({
       success: true,
       message: "Successfully fetched all products!",

@@ -6,6 +6,11 @@ const OrderSchema = new Schema({
     ref: "User",
     required: true,
   },
+  artistId: {
+    type: Schema.Types.ObjectId,
+    ref: "Artist",
+    required: true,
+  },
   items: [
     {
       productId: {
@@ -19,6 +24,19 @@ const OrderSchema = new Schema({
       },
     },
   ],
+  address: {
+    type: String,
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+    required: true,
+    enum: ["COD", "Card"],
+  },
+  totalPrice: {
+    type: Number,
+    required: true,
+  },
   orderDate: {
     type: Date,
     required: true,
@@ -29,6 +47,12 @@ const OrderSchema = new Schema({
     required: true,
     default: "Pending",
     enum: ["Pending", "Preparing", "For delivery", "Delivered"],
+  },
+  paymentStatus: {
+    type: String,
+    required: true,
+    default: "Pending",
+    enum: ["Pending", "Paid"],
   },
 });
 
