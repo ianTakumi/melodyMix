@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.galaxies.firebase",
+      "package": "com.melodymix.app",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -33,6 +33,15 @@
       "@react-native-firebase/auth",
       "expo-build-properties",
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f6c40ca7-e376-47fc-a917-035a43315218"
+      }
+    },
+    "owner": "ian_takumi"
   }
 }

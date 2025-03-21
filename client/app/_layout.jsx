@@ -10,22 +10,36 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 import { StatusBar } from "react-native";
 import { SQLiteProvider } from "expo-sqlite";
 import { initCartDB } from "../utils/SQlite/cartDB";
+import * as Notifications from "expo-notifications";
+import { NotificationProvider } from "../context/NotificationContext";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function Layout() {
   return (
     <>
-      <SQLiteProvider databaseName="cart.db" onInit={initCartDB}>
-        <StatusBar hidden={true} />
-        <Provider store={store}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <StripeProvider publishableKey={process.env.STRIPE_PUBLISHABLE_KEY}>
-              <NotificationsProvider>
-                <Slot />
-              </NotificationsProvider>
-            </StripeProvider>
-          </GestureHandlerRootView>
-        </Provider>
-      </SQLiteProvider>
+      <NotificationProvider>
+        <SQLiteProvider databaseName="cart.db" onInit={initCartDB}>
+          <StatusBar hidden={true} />
+          <Provider store={store}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <StripeProvider
+                publishableKey={process.env.STRIPE_PUBLISHABLE_KEY}
+              >
+                <NotificationsProvider>
+                  <Slot />
+                </NotificationsProvider>
+              </StripeProvider>
+            </GestureHandlerRootView>
+          </Provider>
+        </SQLiteProvider>
+      </NotificationProvider>
     </>
   );
 }

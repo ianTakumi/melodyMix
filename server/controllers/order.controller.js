@@ -183,7 +183,7 @@ export const updateOrder = async (req, res, next) => {
       orderId,
       { orderStatus },
       { new: true }
-    );
+    ).populate("userId"); // Populate userId field
 
     if (!order) {
       return next({

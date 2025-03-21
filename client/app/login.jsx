@@ -18,6 +18,7 @@ import axiosInstance from "../utils/AxiosInstance";
 import { notifyToast } from "../utils/helpers";
 import { saveArtist, saveUser } from "./redux/slices/AuthSlice";
 import Feather from "@expo/vector-icons/Feather";
+import { registerForPushNotificationsAsync } from "../utils/registerForPushNotificationsAsync";
 
 export default function Login() {
   const router = useRouter();
@@ -38,48 +39,53 @@ export default function Login() {
   const onSubmit = async (data) => {
     console.log(data);
     setLoading(true);
+
     try {
-      // Login first to the firebase
-      const user = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      // If valid then login to the db
-      if (user) {
-        const response = await axiosInstance
-          .post("/auths/login", data)
-          .then((response) => {
-            if (response.status === 200) {
-              notifyToast("Success", "Login successful!", "success");
-              if (response.data.user) {
-                const userObj = response.data.user;
-                const userToken = response.data.token;
-                const user = response.data.user;
-                if (user.role === "customer") {
-                  dispatch(
-                    saveUser({
-                      user: userObj,
-                      token: userToken,
-                    })
-                  );
-                  router.push("/users");
-                } else if (user.role === "admin") {
-                  router.push("/admin");
-                }
-              } else if (response.data.artist) {
-                const artistObj = response.data.artist;
-                const artistToken = response.data.token;
-                dispatch(saveArtist({ artist: artistObj, token: artistToken }));
-                router.push("artists/");
-              }
-            } else if (response.status === 400) {
-              notifyToast("Warning", response.data.message, "warning");
-            }
-          });
+      const response = await axiosInstance.post("/auths/login", data);
+
+      if (response.status !== 200) {
+        notifyToast("Warning", response.data.message, "warning");
+        return;
       }
-    } catch (e) {
-      console.log(e);
+
+      notifyToast("Success", "Login successful!", "success");
+
+      const { user, artist, token } = response.data;
+
+      if (user || artist) {
+        const userObj = user || artist;
+        const userToken = token;
+        const role = user ? user.role : "artist";
+        const userId = userObj._id;
+        console.log(userId);
+        // Get Expo Push Token
+        const expoPushToken = await registerForPushNotificationsAsync();
+
+        const updateResponse = await axiosInstance.post("/users/update-token", {
+          userId,
+          expoPushToken,
+          role,
+        });
+
+        const updatedUser = updateResponse.data.user;
+
+        dispatch(
+          user
+            ? saveUser({ user: updatedUser, token: userToken })
+            : saveArtist({ artist: updatedUser, token: userToken })
+        );
+
+        // Redirect based on role
+        router.push(
+          role === "customer"
+            ? "/users"
+            : role === "admin"
+            ? "/admin"
+            : "/artists"
+        );
+      }
+    } catch (error) {
+      console.error(error);
       notifyToast("Warning", "Invalid credentials", "warning");
     } finally {
       setLoading(false);

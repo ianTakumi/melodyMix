@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "223291471850",
-    "project_id": "melodymix-b4674",
-    "storage_bucket": "melodymix-b4674.firebasestorage.app"
+    "project_number": "185367900295",
+    "project_id": "melodymixfinal",
+    "storage_bucket": "melodymixfinal.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:223291471850:android:df2ceff16fc3cd6898a493",
+        "mobilesdk_app_id": "1:185367900295:android:a93363055ec1caed150822",
         "android_client_info": {
-          "package_name": "com.galaxies.firebase"
+          "package_name": "com.melodymix.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "223291471850-neo5eqc9unslip2bj17i1aa8p3vfmi1c.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB5pzX8aRRcNnFMKMRQFtVL1kH4DQDq0SU"
+          "current_key": "AIzaSyA6kgS_6Bv1DPw31RYZXvHJlkNHTdWdnNA"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "223291471850-neo5eqc9unslip2bj17i1aa8p3vfmi1c.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

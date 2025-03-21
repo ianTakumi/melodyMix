@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { notifyToast } from "../../utils/helpers";
 import { SelectList } from "react-native-dropdown-select-list";
+import * as Notifications from "expo-notifications";
 
 export default function EditOrder() {
   const [order, setOrder] = useState(null);
@@ -20,7 +21,6 @@ export default function EditOrder() {
   const [loading, setLoading] = useState(true);
   const { orderId } = useLocalSearchParams();
   const router = useRouter();
-  const artist = useAppSelector((state) => state.auth.artist);
 
   const orderStatusOptions = [
     { key: "Pending", value: "Pending" },
@@ -44,12 +44,42 @@ export default function EditOrder() {
     }
   };
 
+  const sendPushNotification = async (expoPushToken, status) => {
+    try {
+      const message = {
+        to: expoPushToken,
+        sound: "default",
+        title: "Order Status Update",
+        body: `Your order status has been updated to ${status}`,
+        data: { orderStatus: status, orderId: orderId },
+      };
+
+      await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Accept-Encoding": "gzip, deflate",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message),
+      });
+    } catch (error) {
+      console.error("Failed to send notification:", error);
+    }
+  };
+
   const updateOrderStatus = async () => {
     try {
       const res = await axiosInstance.put(`/orders/${orderId}`, {
         orderStatus: selectedStatus,
       });
       if (res.status === 200) {
+        const orderData = res.data.data;
+        console.log("Order Data:", orderData);
+        const expoPushToken = orderData.userId.fcm_token;
+        console.log("Expo Push Token:", expoPushToken);
+        console.log("Order Status:", selectedStatus);
+        sendPushNotification(expoPushToken, selectedStatus);
         notifyToast("Success", "Order status updated!", "success");
         router.push("/artists/Orders");
       }

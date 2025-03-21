@@ -13,11 +13,20 @@ import { getCartItems, clearCart } from "../../utils/SQlite/cartDB";
 import { useForm, Controller } from "react-hook-form";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useAppSelector } from "../redux/hooks";
+import {
+  placeOrderStart,
+  placeOrderFailure,
+  placeOrderSuccess,
+} from "../redux/slices/OrderSlice";
+import { useAppDispatch } from "../redux/hooks";
 
 export default function Checkout() {
   const [cartItems, setCartItems] = useState([]);
   const router = useRouter();
   const user = useAppSelector((state) => state.auth.user);
+  const orderState = useAppSelector((state) => state.order);
+  const dispatch = useAppDispatch();
+
   // react-hook-form setup
   const {
     control,
@@ -48,11 +57,12 @@ export default function Checkout() {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     if (cartItems.length === 0) {
       console.warn("⚠️ No items in the cart to checkout.");
       return;
     }
+
+    dispatch(placeOrderStart());
 
     const orderItems = cartItems.map(({ id, quantity }) => ({
       product_id: id,
@@ -71,6 +81,8 @@ export default function Checkout() {
         const res = await axiosInstance.post(`/orders/`, cleanedData);
 
         if (res.status === 201) {
+          dispatch(placeOrderSuccess(res.data)); // Dispatch success with order data
+
           console.log("✅ Order placed successfully:", res.data);
           setCartItems([]);
           clearCart();
@@ -78,6 +90,7 @@ export default function Checkout() {
         }
       } catch (error) {
         console.error("❌ Checkout failed:", error);
+        dispatch(placeOrderFailure(error.message)); // Dispatch failure with error message
       }
     }
   };

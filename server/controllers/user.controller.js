@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-
+import Artist from "../models/artist.model.js";
 // Get all users
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -54,6 +54,53 @@ export const updateUserProfile = async (req, res, next) => {
     next({
       statusCode: 500,
       message: "Update profile unsuccessful",
+      error: error.message,
+    });
+  }
+};
+
+export const updateExpoPushToken = async (req, res, next) => {
+  try {
+    const { userId, expoPushToken, role } = req.body;
+    console.log(req.body);
+
+    if (!userId || !expoPushToken || !role) {
+      return next({ statusCode: 400, message: "Invalid request" });
+    }
+
+    let updatedUser = null;
+
+    if (role === "artist") {
+      updatedUser = await Artist.findByIdAndUpdate(
+        userId,
+        { fcm_token: expoPushToken },
+        { new: true }
+      );
+    } else {
+      updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { fcm_token: expoPushToken },
+        { new: true }
+      );
+    }
+
+    if (!updatedUser) {
+      return next({
+        statusCode: 404,
+        message: `${role === "artist" ? "Artist" : "User"} not found`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Expo push token updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error(error);
+    next({
+      statusCode: 500,
+      message: "Update expo push token unsuccessful",
       error: error.message,
     });
   }

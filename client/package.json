@@ -48,7 +48,11 @@
     "react-redux": "^9.2.0",
     "expo-image-picker": "~16.0.3",
     "expo-document-picker": "~13.0.3",
-    "expo-sqlite": "~15.1.2"
+    "expo-sqlite": "~15.1.2",
+    "expo-notifications": "~0.29.14",
+    "expo-device": "~7.0.2",
+    "expo-constants": "~17.0.8",
+    "expo-dev-client": "~5.0.14"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

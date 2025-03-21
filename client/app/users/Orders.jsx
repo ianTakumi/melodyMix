@@ -50,7 +50,12 @@ export default function Orders() {
             <TouchableOpacity
               key={order._id}
               className="bg-[#1E1E1E] p-4 rounded-lg mb-3"
-              onPress={() => router.push(`/orders/${order._id}`)}
+              onPress={() =>
+                router.push({
+                  pathname: "/users/OrderDetail",
+                  params: { orderId: order._id },
+                })
+              }
             >
               <Text className="text-white text-lg">Order ID: {order._id}</Text>
               <Text className="text-gray-400">Total: ₱{order.totalPrice}</Text>
