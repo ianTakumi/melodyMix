@@ -36,7 +36,11 @@ const CustomHeader = ({ navigation }) => {
           onPress={() => navigation.openDrawer()}
           className="mr-0"
         >
-          <ProfilePicture name={artist.data?.name} imageUrl="" size={40} />
+          <ProfilePicture
+            name={artist.data?.name}
+            imageUrl={artist.data.profile_picture.url}
+            size={40}
+          />
           {/* Replace with actual name and image */}
         </TouchableOpacity>
         <Text className="text-white font-bold font-mono text-3xl ">
@@ -70,7 +74,11 @@ const CustomDrawerContent = (props) => {
       <TouchableOpacity>
         <Link href="/artists/profile">
           <View className="p-4 flex flex-row items-center mt-3">
-            <ProfilePicture name={artist.data?.name} size={50} />
+            <ProfilePicture
+              name={artist.data?.name}
+              imageUrl={artist.data.profile_picture.url}
+              size={50}
+            />
             <View className="ml-4">
               <Text className="text-white">{artist.data?.name}</Text>
               <Text className="text-gray-400">View profile</Text>

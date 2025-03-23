@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import ProfilePicture from "../../components/ProfilePicture";
 import { useAppSelector } from "../redux/hooks";
-import { RootState } from "../redux/store";
 import { useForm, Controller } from "react-hook-form";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
@@ -22,7 +21,7 @@ const UpdateProfile = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [modalVisible, setModalVisible] = useState(false);
-  const [profileImage, setProfileImage] = useState("");
+  const [profileImage, setProfileImage] = useState(user.data.imageUrl || null);
 
   const data = [
     { key: "Man", value: "Man" },
@@ -84,19 +83,36 @@ const UpdateProfile = () => {
           quality: 1,
         });
       }
+
+      if (!result.canceled) {
+        setProfileImage(result.assets[0].uri); // Update state with selected image URI
+      }
+
+      const formData = new FormData();
+      formData.append("profilePicture", {
+        uri: result.assets[0].uri,
+        name: `profilePicture-${user.data._id}.jpg`,
+        type: "image/jpeg",
+      });
+
+      await axiosInstance
+        .put(`/users/updateProfilePicture/${user.data._id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            const user = res.data.user;
+            dispatch(updateUser({ user: user }));
+            notifyToast("Success", "Profile picture updated!", "success");
+          }
+        });
     } catch (error) {
       console.error("Error picking image:", error);
-    } finally {
-      onClose(); // Ensure modal closes even if an error occurs
     }
   };
 
   const handleClose = () => {
     router.back();
-  };
-
-  const updateProfilePicture = () => {
-    console.log("Update profile picture");
   };
 
   return (
@@ -111,13 +127,16 @@ const UpdateProfile = () => {
         </TouchableOpacity>
       </View>
 
-      <View className="mx-3 my-8 flex items-center">
+      <View className="mx-3 my-8 flex items-center relative">
         <TouchableOpacity onPress={() => pickImage(false)}>
           <ProfilePicture
             name={user.data.name}
-            imageUrl={profileImage}
+            imageUrl={profileImage || user.data.profile_picture.url}
             size={120}
           />
+          <View className="absolute bottom-0 right-0 bg-black p-1 rounded-full">
+            <AntDesign name="camerao" size={24} color="white" />
+          </View>
         </TouchableOpacity>
       </View>
 

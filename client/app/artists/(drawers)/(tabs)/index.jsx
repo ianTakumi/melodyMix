@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // Ensure this is installed
 import { LineChart, PieChart } from "react-native-chart-kit";
-import { useNotification } from "../../../../context/NotificationContext";
 
 const screenWidth = Dimensions.get("window").width;
 const data = [
@@ -62,8 +61,6 @@ const chartConfig = {
 };
 
 export default function IndexPage() {
-  const { notification, expoPushToken, error } = useNotification();
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -179,20 +176,6 @@ export default function IndexPage() {
               borderRadius: 16,
             }}
           />
-        </View>
-
-        <View className="text-white">
-          <Text className="text-white">Your push token</Text>
-          <Text className="text-white">{expoPushToken}</Text>
-          <Text type="subtitle" className="text-white">
-            Latest notification:
-          </Text>
-          <Text className="text-white">
-            {notification?.request.content.title}
-          </Text>
-          <Text className="text-white">
-            {JSON.stringify(notification?.request.content.data, null, 2)}
-          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>

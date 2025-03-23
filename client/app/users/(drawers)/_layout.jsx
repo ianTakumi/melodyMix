@@ -18,7 +18,11 @@ const CustomHeader = ({ navigation }) => {
     <View className="pl-4 pt-10 pb-5 flex flex-row justify-between items-center bg-[#141414]">
       {/* Profile Picture */}
       <TouchableOpacity onPress={() => navigation.openDrawer()}>
-        <ProfilePicture name={user.data?.name} imageUrl="" size={40} />
+        <ProfilePicture
+          name={user.data?.name}
+          imageUrl={user.data?.profile_picture.url}
+          size={40}
+        />
       </TouchableOpacity>
 
       {/* Title */}
@@ -57,10 +61,14 @@ const CustomDrawerContent = (props) => {
       }}
     >
       {/* User Profile */}
-      <TouchableOpacity>
+      <TouchableOpacity className="">
         <Link href="/users/profile">
           <View className="p-4 flex flex-row items-center mt-3">
-            <ProfilePicture name={user.data?.name} size={50} />
+            <ProfilePicture
+              name={user.data?.name}
+              imageUrl={user.data?.profile_picture.url}
+              size={50}
+            />
             <View className="ml-4">
               <Text className="text-white">{user.data?.name}</Text>
               <Text className="text-gray-400">View profile</Text>

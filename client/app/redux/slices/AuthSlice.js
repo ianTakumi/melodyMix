@@ -49,6 +49,15 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+export const updateArtist = createAsyncThunk(
+  "auth/updateArtist",
+  async ({ artist }) => {
+    await AsyncStorage.removeItem("artistData");
+    await AsyncStorage.setItem("artistData", JSON.stringify(artist));
+    return artist;
+  }
+);
+
 const initialState = {
   user: {
     isAuthenticated: null,

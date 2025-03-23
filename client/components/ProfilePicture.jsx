@@ -20,7 +20,7 @@ const ProfilePicture = ({ name, imageUrl, size = 30 }) => {
           source={{ uri: imageUrl }} // Display the user's uploaded image
           style={[
             styles.image,
-            { width: 50, height: 50, borderRadius: size / 2 },
+            { width: size, height: size, borderRadius: size / 2 },
           ]}
         />
       ) : (

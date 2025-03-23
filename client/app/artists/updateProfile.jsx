@@ -13,7 +13,8 @@ import { SelectList } from "react-native-dropdown-select-list";
 import { useRouter } from "expo-router";
 import { notifyToast } from "../../utils/helpers";
 import { useAppDispatch } from "../redux/hooks";
-import { updateUser } from "../redux/slices/AuthSlice";
+import { updateArtist } from "../redux/slices/AuthSlice";
+import * as ImagePicker from "expo-image-picker";
 
 const UpdateProfile = () => {
   const artist = useAppSelector((state) => state.auth.artist);
@@ -25,6 +26,9 @@ const UpdateProfile = () => {
     { key: "Woman", value: "Woman" },
     { key: "Prefer not to say", value: "Prefer not to say" },
   ];
+  const [profileImage, setProfileImage] = useState(
+    artist.data.profile_picture.url || null
+  );
 
   const {
     control,
@@ -52,14 +56,60 @@ const UpdateProfile = () => {
   }, [artist.data, setValue]);
 
   const onSubmit = (data) => {
-    const userId = artist.data?._id;
-    axiosInstance.put(`/users/${userId}`, data).then((response) => {
+    const artistId = artist.data?._id;
+    axiosInstance.put(`/artists/${artistId}`, data).then((response) => {
       if (response.status === 200) {
-        const user = response.data.user;
+        const artist = response.data.artist;
         notifyToast("Success", response.data.message, "success");
-        dispatch(updateUser({ user: user }));
+        dispatch(updateArtist({ artist: artist }));
       }
     });
+  };
+
+  const pickImage = async (fromCamera) => {
+    let result;
+    try {
+      if (fromCamera) {
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      } else {
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      }
+
+      if (!result.canceled) {
+        setProfileImage(result.assets[0].uri); // Update state with selected image URI
+      }
+
+      const formData = new FormData();
+      formData.append("profilePicture", {
+        uri: result.assets[0].uri,
+        name: `profilePicture-${artist.data._id}.jpg`,
+        type: "image/jpeg",
+      });
+
+      await axiosInstance
+        .put(`/artists/updateProfilePicture/${artist.data._id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            const artist = res.data.artist;
+            dispatch(updateArtist({ artist: artist }));
+            notifyToast("Success", "Profile picture updated!", "success");
+          }
+        });
+    } catch (error) {
+      console.error("Error picking image:", error);
+    }
   };
 
   const handleClose = () => {
@@ -78,7 +128,16 @@ const UpdateProfile = () => {
         </TouchableOpacity>
       </View>
       <View className="mx-3 my-8 flex items-center">
-        <ProfilePicture name={artist.data?.name} imageUrl={""} size={120} />
+        <TouchableOpacity onPress={() => pickImage(false)}>
+          <ProfilePicture
+            name={artist.data?.name}
+            imageUrl={profileImage || artist.data.profile_picture.url}
+            size={120}
+          />
+          <View className="absolute bottom-0 right-0 bg-black p-1 rounded-full">
+            <AntDesign name="camerao" size={24} color="white" />
+          </View>
+        </TouchableOpacity>
       </View>
       <View className="flex flex-row mt-7 mx-3  py-2 border-b border-[#202020] items-center">
         <Text className="text-white text-xl font-bold mr-10">Name</Text>

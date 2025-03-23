@@ -86,7 +86,11 @@ const Profile = () => {
         {/* Profile container */}
         <View className="my-10 flex flex-row items-center">
           <View className="relative">
-            <ProfilePicture name={artist.data?.name} size={100} />
+            <ProfilePicture
+              name={artist.data?.name}
+              imageUrl={artist.data.profile_picture.url}
+              size={100}
+            />
             <TouchableOpacity className="absolute bottom-0 right-0 p-2">
               <AntDesign name="camera" size={24} color="white" />
             </TouchableOpacity>
